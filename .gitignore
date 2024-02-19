@@ -140,3 +140,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/go,macos,linux,windows,visualstudiocode,vim
 
 credo
+credospell.yaml
