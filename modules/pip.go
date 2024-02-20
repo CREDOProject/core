@@ -23,7 +23,7 @@ func (m *PipModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *PipModule) BareRun(p *Parameters) any {
+func (m *PipModule) BareRun(c *Config, p *Parameters) any {
 	spell, err := m.bareRun(p)
 	if err != nil {
 		m.logger.Fatal(err)
@@ -41,6 +41,20 @@ func (m *PipModule) bareRun(p *Parameters) (PipSpell, error) {
 	}
 
 	return spell, nil
+}
+
+func (m *PipModule) Run(anySpell any) error {
+	return nil
+}
+
+func (m *PipModule) BulkRun(config *Config) error {
+	for _, ps := range config.Pip {
+		err := m.Run(ps)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func init() {

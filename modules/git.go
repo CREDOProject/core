@@ -12,22 +12,20 @@ type GitModule struct {
 	logger *log.Logger
 }
 
-type GitSpell struct {
-	URL     string `yaml:"url"`
-	Version string `yaml:"version"`
-}
-
-func (m *GitModule) Marshaler() interface{} {
-	return GitSpell{}
-}
-
 func (m *GitModule) Commit(config *Config, result any) error {
-	v := result.(GitSpell)
-	config.Git = append(config.Git, v)
+	newEntry := result.(GitSpell) // Type conversion.
+
+	for _, spell := range config.Git {
+		if spell.equals(&newEntry) {
+			return nil // Break from the for loop.
+		}
+	}
+
+	config.Git = append(config.Git, newEntry)
 	return nil
 }
 
-func (m *GitModule) BareRun(p *Parameters) any {
+func (m *GitModule) BareRun(c *Config, p *Parameters) any {
 	spell, err := m.bareRun(p)
 	if err != nil {
 		m.logger.Fatal(err)
@@ -65,6 +63,49 @@ func (m *GitModule) bareRun(p *Parameters) (GitSpell, error) {
 	}
 
 	return spell, nil
+}
+
+func (m *GitModule) Run(anySpell any) error {
+	spell := anySpell.(GitSpell)
+
+	// Try Clone
+	_, err := git.PlainClone("/tmp/test", false, &git.CloneOptions{
+		URL:               spell.URL,
+		Depth:             1,
+		SingleBranch:      true,
+		RecurseSubmodules: 1,
+		Tags:              0,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func (m *GitModule) BulkRun(config *Config) error {
+	for _, gs := range config.Git {
+		err := m.Run(gs)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Struct containing a Spell Entry for a Git repo.
+type GitSpell struct {
+	URL     string `yaml:"url"`
+	Version string `yaml:"version"`
+}
+
+// Function to check equality of two GitSpells
+func (s *GitSpell) equals(t *GitSpell) bool {
+	return s.URL == t.URL && s.Version == t.Version
+}
+
+func (m *GitModule) Marshaler() interface{} {
+	return GitSpell{}
 }
 
 func init() {

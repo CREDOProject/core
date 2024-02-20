@@ -13,10 +13,11 @@ import (
 func main() {
 	logger := logger.Get()
 
-	if len(os.Args) <= 3 {
+	if len(os.Args) <= 1 {
 		logger.Println("Usage: \n./credo moduleName [args...]")
 		return
 	}
+
 	_, moduleName, args := os.Args[0], os.Args[1], os.Args[2:]
 
 	module := modules.Modules[moduleName]()
@@ -29,8 +30,6 @@ func main() {
 		params.Env[args[i]] = args[i+1]
 	}
 
-	result := module.BareRun(&params)
-
 	store := storage.FileStorage{
 		Filename: "credospell.yaml",
 	}
@@ -38,6 +37,9 @@ func main() {
 	prevFile := store.Read()
 
 	config, err := config.FromFile(prevFile)
+
+	// TODO: Spell from Params
+	result := module.BareRun(&config, &params)
 
 	module.Commit(&config, result)
 

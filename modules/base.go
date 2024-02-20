@@ -9,10 +9,16 @@ type Parameters struct {
 }
 
 type Module interface {
-	// Function used to bare run the Module.
-	BareRun(*Parameters) any
+	// Function used to do a bare run of a Module.
+	BareRun(*Config, *Parameters) any
+	// Function used to return the Marshaler of a Module
 	Marshaler() interface{}
+	// Function used to commit a Module into the configuration.
 	Commit(config *Config, result any) error
+	// Function used to run a Module.
+	Run(any) error
+	// Function used to run the config entry of a module.
+	BulkRun(config *Config) error
 }
 
 // Factory to provide a closure to get the Module.
