@@ -30,6 +30,8 @@ func main() {
 		params.Env[args[i]] = args[i+1]
 	}
 
+	// TODO: Spell from Params
+
 	store := storage.FileStorage{
 		Filename: "credospell.yaml",
 	}
@@ -38,7 +40,6 @@ func main() {
 
 	config, err := config.FromFile(prevFile)
 
-	// TODO: Spell from Params
 	result := module.BareRun(&config, &params)
 
 	module.Commit(&config, result)

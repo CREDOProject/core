@@ -9,15 +9,22 @@ type Parameters struct {
 }
 
 type Module interface {
-	// Function used to do a bare run of a Module.
+	// BareRun is used to run a module without making any change to the
+	// file system other than adding an entry to the credospell file.
+	// It returns a spell entry of a module.
 	BareRun(*Config, *Parameters) any
-	// Function used to return the Marshaler of a Module
+
+	// Marshaler returns the interface used by a module to specify its
+	// parameters.
 	Marshaler() interface{}
-	// Function used to commit a Module into the configuration.
+
+	// Commit adds a configuration entry for a said module.
 	Commit(config *Config, result any) error
-	// Function used to run a Module.
+
+	// Run is used to execute a Module making changes to the filesystem.
 	Run(any) error
-	// Function used to run the config entry of a module.
+
+	// BulkRun is used to run the config entry ofa each sub-entry of a module.
 	BulkRun(config *Config) error
 }
 

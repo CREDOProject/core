@@ -55,7 +55,6 @@ func (m *GitModule) bareRun(p *Parameters) (GitSpell, error) {
 		Depth:             1,
 		SingleBranch:      true,
 		RecurseSubmodules: 1,
-		Tags:              0,
 	})
 
 	if err != nil {
@@ -74,7 +73,6 @@ func (m *GitModule) Run(anySpell any) error {
 		Depth:             1,
 		SingleBranch:      true,
 		RecurseSubmodules: 1,
-		Tags:              0,
 	})
 
 	if err != nil {
@@ -83,6 +81,7 @@ func (m *GitModule) Run(anySpell any) error {
 
 	return nil
 }
+
 func (m *GitModule) BulkRun(config *Config) error {
 	for _, gs := range config.Git {
 		err := m.Run(gs)
@@ -108,8 +107,4 @@ func (m *GitModule) Marshaler() interface{} {
 	return GitSpell{}
 }
 
-func init() {
-	Register("git", func() Module {
-		return &GitModule{}
-	})
-}
+func init() { Register("git", func() Module { return &GitModule{} }) }

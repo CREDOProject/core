@@ -27,6 +27,7 @@ func (m *ApplyModule) BareRun(c *Config, p *Parameters) any {
 
 // This bare run is a real run.
 func (m *ApplyModule) bareRun(c *Config, p *Parameters) error {
+
 	for k := range Modules {
 		module := Modules[k]()
 		err := module.BulkRun(c)
@@ -45,6 +46,4 @@ func (m *ApplyModule) BulkRun(config *Config) error {
 	return nil
 }
 
-func init() {
-	Register("apply", func() Module { return &ApplyModule{} })
-}
+func init() { Register("apply", func() Module { return &ApplyModule{} }) }

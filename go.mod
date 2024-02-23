@@ -4,6 +4,8 @@ go 1.21.6
 
 require github.com/go-git/go-git/v5 v5.11.0
 
+require github.com/CREDOProject/go-pip v0.0.0-20240223092502-aac4705260ae // indirect
+
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect

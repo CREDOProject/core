@@ -1,5 +1,13 @@
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
+github.com/CREDOProject/go-pip v0.0.0-20240223075356-6f8c719bdeb6 h1:OJpke6IidVb/3NI6jR/cbTTW8NVdE7rU1orR0zgVzDg=
+github.com/CREDOProject/go-pip v0.0.0-20240223075356-6f8c719bdeb6/go.mod h1:XGbejGBiDCrNpfHfQd1rrzNU0BHAzXbj3oVVzcnWcdA=
+github.com/CREDOProject/go-pip v0.0.0-20240223082405-66d06523cce7 h1:L0W+OXZVuNYQZGXMucDVm3OvJykn1uYIFgQc7L1SCrE=
+github.com/CREDOProject/go-pip v0.0.0-20240223082405-66d06523cce7/go.mod h1:XGbejGBiDCrNpfHfQd1rrzNU0BHAzXbj3oVVzcnWcdA=
+github.com/CREDOProject/go-pip v0.0.0-20240223084825-aee63eb7e241 h1:3MRrOBESJTN3lrtphvURSHqW6EAZ+UaXsnsMWT7cx2A=
+github.com/CREDOProject/go-pip v0.0.0-20240223084825-aee63eb7e241/go.mod h1:XGbejGBiDCrNpfHfQd1rrzNU0BHAzXbj3oVVzcnWcdA=
+github.com/CREDOProject/go-pip v0.0.0-20240223092502-aac4705260ae h1:3Ar8Gmdcsk4BxKMG3QhjQW5l1+6w9wtAq+kcYZtbZrA=
+github.com/CREDOProject/go-pip v0.0.0-20240223092502-aac4705260ae/go.mod h1:XGbejGBiDCrNpfHfQd1rrzNU0BHAzXbj3oVVzcnWcdA=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
