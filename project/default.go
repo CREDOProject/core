@@ -1,7 +1,6 @@
 package project
 
 import (
-	"io/fs"
 	"os"
 	"path"
 )
@@ -21,7 +20,7 @@ func ProjectPath() (*string, error) {
 	projectPath := path.Join(basePath, "credoenv")
 
 	// Create project path.
-	err = os.Mkdir(projectPath, fs.ModeDir)
+	err = os.MkdirAll(projectPath, 0755)
 	if err != nil {
 		return nil, err
 	}

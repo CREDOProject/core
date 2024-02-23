@@ -13,11 +13,11 @@ type GitModule struct {
 }
 
 func (m *GitModule) Commit(config *Config, result any) error {
-	newEntry := result.(GitSpell) // Type conversion.
+	newEntry := result.(GitSpell)
 
 	for _, spell := range config.Git {
 		if spell.equals(&newEntry) {
-			return nil // Break from the for loop.
+			return nil
 		}
 	}
 
@@ -37,6 +37,7 @@ func (m *GitModule) bareRun(p *Parameters) (GitSpell, error) {
 	if len(p.Env) < 1 {
 		return GitSpell{}, errors.New("Git module requires at least one parameter.")
 	}
+
 	// Logic to get the latest version or the specified version.
 	version := p.Env["version"]
 	if len(version) == 0 {

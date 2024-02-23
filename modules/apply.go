@@ -2,6 +2,7 @@ package modules
 
 import (
 	"credo/logger"
+	"credo/project"
 	"log"
 )
 
@@ -27,6 +28,11 @@ func (m *ApplyModule) BareRun(c *Config, p *Parameters) any {
 
 // This bare run is a real run.
 func (m *ApplyModule) bareRun(c *Config, p *Parameters) error {
+
+	_, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
 
 	for k := range Modules {
 		module := Modules[k]()
