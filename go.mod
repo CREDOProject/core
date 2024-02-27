@@ -16,7 +16,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/CREDOProject/go-pythonvenv v0.0.4
+	github.com/CREDOProject/go-pythonvenv v0.0.5
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
@@ -39,3 +39,4 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )
+

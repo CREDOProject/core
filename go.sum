@@ -5,8 +5,12 @@ github.com/CREDOProject/go-pip v0.0.1 h1:yj2Ft7ZQ7PtsyHQSPRE18VyitekAjHq5PZHsAmJ
 github.com/CREDOProject/go-pip v0.0.1/go.mod h1:UcqpJPB6mbbFxpEm9Fdvk3AM4tl2FVrgvwog0cCmpXw=
 github.com/CREDOProject/go-pythonvenv v0.0.3 h1:6HEvgy/wrvOAmM2uBlp4DXSMonnaNdVwcpCuToyKmLA=
 github.com/CREDOProject/go-pythonvenv v0.0.3/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
+github.com/CREDOProject/go-pythonvenv v0.0.4-hotfix1 h1:4ZYgsAb/phYm4TXb6e71TkBKDctFQmF3hH1RnXI7L4w=
+github.com/CREDOProject/go-pythonvenv v0.0.4-hotfix1/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
 github.com/CREDOProject/go-pythonvenv v0.0.4 h1:W3B0CrWTGHBZyckyjMU8GVuzN+r8dk7db2jEqGy5i3w=
 github.com/CREDOProject/go-pythonvenv v0.0.4/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
+github.com/CREDOProject/go-pythonvenv v0.0.5 h1:xQ2rPfUdrMYtIFtRLZwhVrD9IV21Bu6K/guJwbh/MGg=
+github.com/CREDOProject/go-pythonvenv v0.0.5/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
 github.com/CREDOProject/sharedutils v0.0.1 h1:cAjaIqUMiK7wNfXh1X04cio4LcLzXPEhbEL6ejM5zEI=
 github.com/CREDOProject/sharedutils v0.0.1/go.mod h1:lOd6evmYnKPa+Q191hZMAFXttCWbhDmMAj33n3sCvAE=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=

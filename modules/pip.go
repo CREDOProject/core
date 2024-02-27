@@ -2,12 +2,15 @@ package modules
 
 import (
 	"credo/logger"
+	"credo/project"
 	"errors"
 	"log"
 	"os"
+	"path"
 
 	gopip "github.com/CREDOProject/go-pip"
 	"github.com/CREDOProject/go-pip/utils"
+	pythonvenv "github.com/CREDOProject/go-pythonvenv"
 )
 
 type PipModule struct {
@@ -48,6 +51,14 @@ func (m *PipModule) BareRun(c *Config, p *Parameters) any {
 	return spell
 }
 
+func setupPythonVenv(path string) (string, error) {
+	venv, err := pythonvenv.Create(path)
+	if err != nil {
+		return "", err
+	}
+	return venv.Path, nil
+}
+
 func (m *PipModule) bareRun(p *Parameters) (PipSpell, error) {
 	if len(p.Env) < 1 {
 		return PipSpell{},
@@ -58,7 +69,18 @@ func (m *PipModule) bareRun(p *Parameters) (PipSpell, error) {
 		Name: p.Env["name"],
 	}
 
-	pipBinary, err := utils.DetectPipBinary()
+	// Obtain the project path
+	projectPath, err := project.ProjectPath()
+	if err != nil {
+		return PipSpell{}, err
+	}
+
+	venvPath, err := setupPythonVenv(path.Join(*projectPath, "venv"))
+	if err != nil {
+		return PipSpell{}, err
+	}
+
+	pipBinary, err := utils.PipBinaryFrom(path.Join(venvPath, "bin"))
 	if err != nil {
 		return PipSpell{}, err
 	}
