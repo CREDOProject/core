@@ -1,12 +1,17 @@
 package modules
 
 import (
-	"errors"
+	"credo/logger"
+	"credo/utils"
+	"fmt"
 	"log"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
+	"github.com/spf13/cobra"
 )
+
+const _moduleName = "git"
 
 type GitModule struct {
 	logger *log.Logger
@@ -25,34 +30,30 @@ func (m *GitModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *GitModule) BareRun(c *Config, p *Parameters) any {
-	spell, err := m.bareRun(p)
+func (m *GitModule) BareRun(c *Config, p any) any {
+	spell, err := m.bareRun(p.(GitSpell))
 	if err != nil {
 		m.logger.Fatal(err)
 	}
 	return spell
 }
 
-func (m *GitModule) bareRun(p *Parameters) (GitSpell, error) {
-	if len(p.Env) < 1 {
-		return GitSpell{}, errors.New("Git module requires at least one parameter.")
-	}
-
+func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
 	// Logic to get the latest version or the specified version.
-	version := p.Env["version"]
+	version := p.Version
 	if len(version) == 0 {
 		version = "HEAD"
 	}
 
 	// Setup a spell entry.
 	spell := GitSpell{
-		URL:     p.Env["url"],
+		URL:     p.URL,
 		Version: version,
 	}
 
 	// Try Cloning
 	_, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
-		URL:               p.Env["url"],
+		URL:               p.URL,
 		Depth:             1,
 		SingleBranch:      true,
 		RecurseSubmodules: 1,
@@ -108,4 +109,35 @@ func (m *GitModule) Marshaler() interface{} {
 	return GitSpell{}
 }
 
-func init() { Register("git", func() Module { return &GitModule{} }) }
+func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {
+	return &cobra.Command{
+		Use:   _moduleName,
+		Short: "Retrieves a remote git repository.",
+		Run: func(cmd *cobra.Command, args []string) {
+			spell, err := m.bareRun(GitSpell{
+				URL:     args[0],
+				Version: "",
+			})
+			if err != nil {
+				logger.Get().Fatal(err)
+			}
+			err = m.Commit(conifig, spell)
+			if err != nil {
+				logger.Get().Fatal(err)
+			}
+		},
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return fmt.Errorf("%s module requires at least one argument.",
+					_moduleName)
+			}
+			url := args[0]
+			if !utils.IsGitUrl(url) {
+				return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
+			}
+			return nil
+		},
+	}
+}
+
+func init() { Register(_moduleName, func() Module { return &GitModule{} }) }

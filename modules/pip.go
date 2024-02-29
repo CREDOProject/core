@@ -3,7 +3,6 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
-	"errors"
 	"log"
 	"os"
 	"path"
@@ -11,6 +10,7 @@ import (
 	gopip "github.com/CREDOProject/go-pip"
 	"github.com/CREDOProject/go-pip/utils"
 	pythonvenv "github.com/CREDOProject/go-pythonvenv"
+	"github.com/spf13/cobra"
 )
 
 type PipModule struct {
@@ -43,8 +43,8 @@ func (m *PipModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *PipModule) BareRun(c *Config, p *Parameters) any {
-	spell, err := m.bareRun(p)
+func (m *PipModule) BareRun(c *Config, p any) any {
+	spell, err := m.bareRun(p.(PipSpell))
 	if err != nil {
 		logger.Get().Fatal(err)
 	}
@@ -59,14 +59,10 @@ func setupPythonVenv(path string) (string, error) {
 	return venv.Path, nil
 }
 
-func (m *PipModule) bareRun(p *Parameters) (PipSpell, error) {
-	if len(p.Env) < 1 {
-		return PipSpell{},
-			errors.New("Pip module requires at least one parameter.")
-	}
+func (m *PipModule) bareRun(p PipSpell) (PipSpell, error) {
 	// Setup a spell entry.
 	spell := PipSpell{
-		Name: p.Env["name"],
+		Name: p.Name,
 	}
 
 	// Obtain the project path
@@ -111,6 +107,10 @@ func (m *PipModule) BulkRun(config *Config) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (m *PipModule) CliConfig(conifig *Config) *cobra.Command {
 	return nil
 }
 

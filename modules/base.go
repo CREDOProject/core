@@ -2,17 +2,15 @@ package modules
 
 import (
 	"credo/logger"
-)
 
-type Parameters struct {
-	Env map[string]string
-}
+	"github.com/spf13/cobra"
+)
 
 type Module interface {
 	// BareRun is used to run a module without making any change to the
 	// file system other than adding an entry to the credospell file.
 	// It returns a spell entry of a module.
-	BareRun(*Config, *Parameters) any
+	BareRun(*Config, any) any
 
 	// Marshaler returns the interface used by a module to specify its
 	// parameters.
@@ -26,6 +24,9 @@ type Module interface {
 
 	// BulkRun is used to run the config entry ofa each sub-entry of a module.
 	BulkRun(config *Config) error
+
+	// Returns a cobra.Command to use in the command line.
+	CliConfig(config *Config) *cobra.Command
 }
 
 // Factory to provide a closure to get the Module.
