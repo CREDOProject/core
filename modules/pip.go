@@ -62,29 +62,36 @@ func setupPythonVenv(path string) (string, error) {
 	return venv.Path, nil
 }
 
+func getPipBinary() (*string, error) {
+	// Obtain the project path
+	projectPath, err := project.ProjectPath()
+	if err != nil {
+		return nil, err
+	}
+
+	venvPath, err := setupPythonVenv(path.Join(*projectPath, "venv"))
+	if err != nil {
+		return nil, err
+	}
+
+	pipBinary, err := utils.PipBinaryFrom(path.Join(venvPath, "bin"))
+	if err != nil {
+		return nil, err
+	}
+	return &pipBinary, nil
+}
+
 func (m *PipModule) bareRun(p PipSpell) (PipSpell, error) {
 	// Setup a spell entry.
 	spell := PipSpell{
 		Name: p.Name,
 	}
-
-	// Obtain the project path
-	projectPath, err := project.ProjectPath()
+	pipBinary, err := getPipBinary()
 	if err != nil {
 		return PipSpell{}, err
 	}
 
-	venvPath, err := setupPythonVenv(path.Join(*projectPath, "venv"))
-	if err != nil {
-		return PipSpell{}, err
-	}
-
-	pipBinary, err := utils.PipBinaryFrom(path.Join(venvPath, "bin"))
-	if err != nil {
-		return PipSpell{}, err
-	}
-
-	cmd, err := gopip.New(pipBinary).Install(spell.Name).DryRun().Seal()
+	cmd, err := gopip.New(*pipBinary).Install(spell.Name).DryRun().Seal()
 	if err != nil {
 		return PipSpell{}, err
 	}
@@ -100,6 +107,24 @@ func (m *PipModule) bareRun(p PipSpell) (PipSpell, error) {
 }
 
 func (m *PipModule) Run(anySpell any) error {
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	pipBinary, err := getPipBinary()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, pipModuleName)
+	cmd, err := gopip.New(*pipBinary).
+		Download(anySpell.(PipSpell).Name, downloadPath).
+		Seal()
+	err = cmd.Run(&gopip.RunOptions{
+		Output: os.Stdout,
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
