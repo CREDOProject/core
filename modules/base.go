@@ -7,11 +7,6 @@ import (
 )
 
 type Module interface {
-	// BareRun is used to run a module without making any change to the
-	// file system other than adding an entry to the credospell file.
-	// It returns a spell entry of a module.
-	BareRun(*Config, any) any
-
 	// Marshaler returns the interface used by a module to specify its
 	// parameters.
 	Marshaler() interface{}

@@ -19,10 +19,6 @@ func (m *ApplyModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *ApplyModule) BareRun(c *Config, p any) any {
-	return nil
-}
-
 func (m *ApplyModule) bulkRun(c *Config) error {
 	_, err := project.ProjectPath()
 	if err != nil {

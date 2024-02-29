@@ -11,7 +11,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const _moduleName = "git"
+const gitModuleName = "git"
+
+const gitModuleExample = `
+Clone a git repository:
+	credo git https://github.com/kendomaniac/rCASC
+
+Clone a git repository at a specific version tag:
+	credo git https://github.com/kendomaniac/docker4seq 2.1.2
+`
 
 type GitModule struct {
 	logger *log.Logger
@@ -28,14 +36,6 @@ func (m *GitModule) Commit(config *Config, result any) error {
 
 	config.Git = append(config.Git, newEntry)
 	return nil
-}
-
-func (m *GitModule) BareRun(c *Config, p any) any {
-	spell, err := m.bareRun(p.(GitSpell))
-	if err != nil {
-		m.logger.Fatal(err)
-	}
-	return spell
 }
 
 func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
@@ -68,7 +68,6 @@ func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
 
 func (m *GitModule) Run(anySpell any) error {
 	spell := anySpell.(GitSpell)
-
 	// Try Clone
 	_, err := git.PlainClone("/tmp/test", false, &git.CloneOptions{
 		URL:               spell.URL,
@@ -76,11 +75,9 @@ func (m *GitModule) Run(anySpell any) error {
 		SingleBranch:      true,
 		RecurseSubmodules: 1,
 	})
-
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -111,12 +108,28 @@ func (m *GitModule) Marshaler() interface{} {
 
 func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   _moduleName,
-		Short: "Retrieves a remote git repository.",
+		Use:     gitModuleName,
+		Short:   "Retrieves a remote git repository.",
+		Example: gitModuleExample,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return fmt.Errorf("%s module requires at least one argument.",
+					gitModuleName)
+			}
+			url := args[0]
+			if !utils.IsGitUrl(url) {
+				return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
+			}
+			return nil
+		},
 		Run: func(cmd *cobra.Command, args []string) {
+			version := ""
+			if len(args) > 1 {
+				version = args[1]
+			}
 			spell, err := m.bareRun(GitSpell{
 				URL:     args[0],
-				Version: "",
+				Version: version,
 			})
 			if err != nil {
 				logger.Get().Fatal(err)
@@ -126,18 +139,7 @@ func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {
 				logger.Get().Fatal(err)
 			}
 		},
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("%s module requires at least one argument.",
-					_moduleName)
-			}
-			url := args[0]
-			if !utils.IsGitUrl(url) {
-				return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
-			}
-			return nil
-		},
 	}
 }
 
-func init() { Register(_moduleName, func() Module { return &GitModule{} }) }
+func init() { Register(gitModuleName, func() Module { return &GitModule{} }) }

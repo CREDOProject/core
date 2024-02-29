@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/CREDOProject/sharedutils v0.0.1 // indirect
+	github.com/CREDOProject/sharedutils v0.0.3 // indirect
 	github.com/aquasecurity/go-pep440-version v0.0.0-20210121094942-22b2f8951d46 // indirect
 	github.com/aquasecurity/go-version v0.0.0-20210121072130-637058cfe492 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -23,7 +23,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/CREDOProject/go-pythonvenv v0.0.5
+	github.com/CREDOProject/go-pythonvenv v0.1.0
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect

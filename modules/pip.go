@@ -3,6 +3,7 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -12,6 +13,16 @@ import (
 	pythonvenv "github.com/CREDOProject/go-pythonvenv"
 	"github.com/spf13/cobra"
 )
+
+const pipModuleName = "pip"
+
+const pipModuleExample = `
+Install a pip package:
+	credo pip numpy
+
+Install a pip package pinning it to a version:
+	credo pip numpy==1.26.0
+`
 
 type PipModule struct {
 	logger *log.Logger
@@ -41,14 +52,6 @@ func (m *PipModule) Commit(config *Config, result any) error {
 
 	config.Pip = append(config.Pip, newEntry)
 	return nil
-}
-
-func (m *PipModule) BareRun(c *Config, p any) any {
-	spell, err := m.bareRun(p.(PipSpell))
-	if err != nil {
-		logger.Get().Fatal(err)
-	}
-	return spell
 }
 
 func setupPythonVenv(path string) (string, error) {
@@ -111,7 +114,30 @@ func (m *PipModule) BulkRun(config *Config) error {
 }
 
 func (m *PipModule) CliConfig(conifig *Config) *cobra.Command {
-	return nil
+	return &cobra.Command{
+		Use:     pipModuleName,
+		Short:   "Retrieves a python package.",
+		Example: pipModuleExample,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return fmt.Errorf("%s module requires at least one argument.",
+					pipModuleName)
+			}
+			return nil
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			spell, err := m.bareRun(PipSpell{
+				Name: args[0],
+			})
+			if err != nil {
+				logger.Get().Fatal(err)
+			}
+			err = m.Commit(conifig, spell)
+			if err != nil {
+				logger.Get().Fatal(err)
+			}
+		},
+	}
 }
 
-func init() { Register("pip", func() Module { return &PipModule{} }) }
+func init() { Register(pipModuleName, func() Module { return &PipModule{} }) }
