@@ -2,9 +2,12 @@ package modules
 
 import (
 	"credo/logger"
+	"credo/project"
 	"credo/utils"
 	"fmt"
 	"log"
+	"path"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -68,12 +71,20 @@ func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
 
 func (m *GitModule) Run(anySpell any) error {
 	spell := anySpell.(GitSpell)
+
+	// Obtain the project path
+	projectPath, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	_, _, _, repoPath := utils.FindScpLikeComponents(spell.URL)
+	joinedPath := path.Join(strings.Split(repoPath, "/")...)
 	// Try Clone
-	_, err := git.PlainClone("/tmp/test", false, &git.CloneOptions{
+	_, err = git.PlainClone(path.Join(*projectPath, gitModuleName, joinedPath), false, &git.CloneOptions{
 		URL:               spell.URL,
 		Depth:             1,
 		SingleBranch:      true,
-		RecurseSubmodules: 1,
+		RecurseSubmodules: git.DefaultSubmoduleRecursionDepth,
 	})
 	if err != nil {
 		return err

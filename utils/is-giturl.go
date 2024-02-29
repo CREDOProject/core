@@ -37,3 +37,10 @@ func isLocalEndpoint(url string) bool {
 func IsGitUrl(url string) bool {
 	return matchesScheme(url) || matchesScpLike(url) || isLocalEndpoint(url)
 }
+
+// FindScpLikeComponents returns the user, host, port and path of the
+// given SCP-like URL.
+func FindScpLikeComponents(url string) (user, host, port, path string) {
+	m := scpLikeUrlRegExp.FindStringSubmatch(url)
+	return m[1], m[2], m[3], m[4]
+}
