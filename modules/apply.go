@@ -2,21 +2,14 @@ package modules
 
 import (
 	"credo/project"
-	"log"
 
 	"github.com/spf13/cobra"
 )
 
-type ApplyModule struct {
-	logger *log.Logger
-}
-
-func (m *ApplyModule) Marshaler() interface{} {
-	return nil
-}
+type ApplyModule struct{}
 
 func (m *ApplyModule) Commit(config *Config, result any) error {
-	return nil
+	panic("unimplemented")
 }
 
 func (m *ApplyModule) bulkRun(c *Config) error {
@@ -36,12 +29,13 @@ func (m *ApplyModule) bulkRun(c *Config) error {
 }
 
 func (m *ApplyModule) Run(anySpell any) error {
-	return nil
+	panic("unimplemented")
 }
 
 func (m *ApplyModule) BulkRun(config *Config) error {
-	return nil
+	panic("unimplemented")
 }
+
 func (m *ApplyModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "apply",

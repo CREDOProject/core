@@ -24,19 +24,13 @@ Clone a git repository at a specific version tag:
 	credo git https://github.com/kendomaniac/docker4seq 2.1.2
 `
 
-type GitModule struct {
-	logger *log.Logger
-}
+type GitModule struct{}
 
 func (m *GitModule) Commit(config *Config, result any) error {
 	newEntry := result.(GitSpell)
-
-	for _, spell := range config.Git {
-		if spell.equals(&newEntry) {
-			return nil
-		}
+	if shouldAdd := Contains[GitSpell](config.Git, newEntry); !shouldAdd {
+		return ErrAlreadyPresent
 	}
-
 	config.Git = append(config.Git, newEntry)
 	return nil
 }
@@ -109,12 +103,11 @@ type GitSpell struct {
 }
 
 // Function to check equality of two GitSpells
-func (s *GitSpell) equals(t *GitSpell) bool {
-	return s.URL == t.URL && s.Version == t.Version
-}
-
-func (m *GitModule) Marshaler() interface{} {
-	return GitSpell{}
+func (s GitSpell) equals(t equatable) bool {
+	if o, ok := t.(GitSpell); ok {
+		return s.URL == o.URL && s.Version == o.Version
+	}
+	return false
 }
 
 func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {

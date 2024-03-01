@@ -2,6 +2,7 @@ package modules
 
 // Application configuration.
 type Config struct {
-	Git []GitSpell `yaml:"git,omitempty"`
-	Pip []PipSpell `yaml:"pip,omitempty"`
+	Git   []GitSpell   `yaml:"git,omitempty"`
+	Pip   []PipSpell   `yaml:"pip,omitempty"`
+	Conda []CondaSpell `yaml:"conda,omitempty"`
 }

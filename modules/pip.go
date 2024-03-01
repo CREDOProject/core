@@ -4,7 +4,6 @@ import (
 	"credo/logger"
 	"credo/project"
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -24,32 +23,25 @@ Install a pip package pinning it to a version:
 	credo pip numpy==1.26.0
 `
 
-type PipModule struct {
-	logger *log.Logger
-}
+type PipModule struct{}
 
 type PipSpell struct {
 	Name string `yaml:"name"`
 }
 
 // Function to check equality of two PipSpells
-func (s *PipSpell) equals(t *PipSpell) bool {
-	return s.Name == t.Name
-}
-
-func (m *PipModule) Marshaler() interface{} {
-	return PipSpell{}
+func (s PipSpell) equals(t equatable) bool {
+	if o, ok := t.(PipSpell); ok {
+		return s.Name == o.Name
+	}
+	return false
 }
 
 func (m *PipModule) Commit(config *Config, result any) error {
 	newEntry := result.(PipSpell)
-
-	for _, spell := range config.Pip {
-		if spell.equals(&newEntry) {
-			return nil // Break from the for loop.
-		}
+	if shouldAdd := Contains[PipSpell](config.Pip, newEntry); !shouldAdd {
+		return ErrAlreadyPresent
 	}
-
 	config.Pip = append(config.Pip, newEntry)
 	return nil
 }
