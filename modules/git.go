@@ -3,7 +3,6 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
-	"credo/utils"
 	"fmt"
 	"path"
 	"strings"
@@ -11,6 +10,8 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/spf13/cobra"
+
+	goisgiturl "github.com/CREDOProject/go-isgiturl"
 )
 
 const gitModuleName = "git"
@@ -28,7 +29,7 @@ func init() { Register(gitModuleName, func() Module { return &gitModule{} }) }
 type gitModule struct{}
 
 func (m *gitModule) Commit(config *Config, result any) error {
-	newEntry := result.(GitSpell)
+	newEntry := result.(gitSpell)
 	if Contains(config.Git, newEntry) {
 		return ErrAlreadyPresent
 	}
@@ -36,7 +37,7 @@ func (m *gitModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *gitModule) bareRun(p GitSpell) (GitSpell, error) {
+func (m *gitModule) bareRun(p gitSpell) (gitSpell, error) {
 	// Logic to get the latest version or the specified version.
 	version := p.Version
 	if len(version) == 0 {
@@ -44,7 +45,7 @@ func (m *gitModule) bareRun(p GitSpell) (GitSpell, error) {
 	}
 
 	// Setup a spell entry.
-	spell := GitSpell{
+	spell := gitSpell{
 		URL:     p.URL,
 		Version: version,
 	}
@@ -65,14 +66,14 @@ func (m *gitModule) bareRun(p GitSpell) (GitSpell, error) {
 }
 
 func (m *gitModule) Run(anySpell any) error {
-	spell := anySpell.(GitSpell)
+	spell := anySpell.(gitSpell)
 
 	// Obtain the project path
 	projectPath, err := project.ProjectPath()
 	if err != nil {
 		return err
 	}
-	_, _, _, repoPath := utils.FindScpLikeComponents(spell.URL)
+	_, _, _, repoPath := goisgiturl.FindScpLikeComponents(spell.URL)
 	joinedPath := path.Join(strings.Split(repoPath, "/")...)
 	// Try Clone
 	_, err = git.PlainClone(path.Join(*projectPath, gitModuleName, joinedPath), false, &git.CloneOptions{
@@ -98,14 +99,14 @@ func (m *gitModule) BulkRun(config *Config) error {
 }
 
 // Struct containing a Spell Entry for a Git repo.
-type GitSpell struct {
+type gitSpell struct {
 	URL     string `yaml:"url"`
 	Version string `yaml:"version"`
 }
 
 // Function to check equality of two GitSpells
-func (s GitSpell) equals(t equatable) bool {
-	if o, ok := t.(GitSpell); ok {
+func (s gitSpell) equals(t equatable) bool {
+	if o, ok := t.(gitSpell); ok {
 		return strings.Compare(s.URL, o.URL) == 0 &&
 			strings.Compare(s.Version, o.Version) == 0
 	}
@@ -123,7 +124,7 @@ func (m *gitModule) CliConfig(conifig *Config) *cobra.Command {
 					gitModuleName)
 			}
 			url := args[0]
-			if !utils.IsGitUrl(url) {
+			if !goisgiturl.IsGitUrl(url) {
 				return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
 			}
 			return nil
@@ -133,7 +134,7 @@ func (m *gitModule) CliConfig(conifig *Config) *cobra.Command {
 			if len(args) > 1 {
 				version = args[1]
 			}
-			spell, err := m.bareRun(GitSpell{
+			spell, err := m.bareRun(gitSpell{
 				URL:     args[0],
 				Version: version,
 			})
