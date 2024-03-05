@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	gopip "github.com/CREDOProject/go-pip"
 	"github.com/CREDOProject/go-pip/utils"
@@ -23,6 +24,8 @@ Install a pip package pinning it to a version:
 	credo pip numpy==1.26.0
 `
 
+func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
+
 type pipModule struct{}
 
 type pipSpell struct {
@@ -32,14 +35,14 @@ type pipSpell struct {
 // Function to check equality of two PipSpells
 func (s pipSpell) equals(t equatable) bool {
 	if o, ok := t.(pipSpell); ok {
-		return s.Name == o.Name
+		return strings.Compare(s.Name, o.Name) == 0
 	}
 	return false
 }
 
 func (m *pipModule) Commit(config *Config, result any) error {
 	newEntry := result.(pipSpell)
-	if shouldAdd := Contains[pipSpell](config.Pip, newEntry); !shouldAdd {
+	if Contains(config.Pip, newEntry) {
 		return ErrAlreadyPresent
 	}
 	config.Pip = append(config.Pip, newEntry)
@@ -74,16 +77,12 @@ func getPipBinary() (*string, error) {
 }
 
 func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
-	// Setup a spell entry.
-	spell := pipSpell{
-		Name: p.Name,
-	}
 	pipBinary, err := getPipBinary()
 	if err != nil {
 		return pipSpell{}, err
 	}
 
-	cmd, err := gopip.New(*pipBinary).Install(spell.Name).DryRun().Seal()
+	cmd, err := gopip.New(*pipBinary).Install(p.Name).DryRun().Seal()
 	if err != nil {
 		return pipSpell{}, err
 	}
@@ -95,7 +94,7 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 		return pipSpell{}, err
 	}
 
-	return spell, nil
+	return p, nil
 }
 
 func (m *pipModule) Run(anySpell any) error {
@@ -156,5 +155,3 @@ func (m *pipModule) CliConfig(conifig *Config) *cobra.Command {
 		},
 	}
 }
-
-func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }

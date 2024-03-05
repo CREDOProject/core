@@ -6,18 +6,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ApplyModule struct{}
+const applyModuleName = "apply"
 
-func (m *ApplyModule) Commit(config *Config, result any) error {
-	panic("unimplemented")
-}
+func init() { Register(applyModuleName, func() Module { return &ApplyModule{} }) }
+
+type ApplyModule struct{}
 
 func (m *ApplyModule) bulkRun(c *Config) error {
 	_, err := project.ProjectPath()
 	if err != nil {
 		return err
 	}
-
 	for k := range Modules {
 		module := Modules[k]()
 		err := module.BulkRun(c)
@@ -28,17 +27,9 @@ func (m *ApplyModule) bulkRun(c *Config) error {
 	return nil
 }
 
-func (m *ApplyModule) Run(anySpell any) error {
-	panic("unimplemented")
-}
-
-func (m *ApplyModule) BulkRun(config *Config) error {
-	panic("unimplemented")
-}
-
 func (m *ApplyModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "apply",
+		Use:   applyModuleName,
 		Short: "Applies the credospell.yaml configuration in the current directory.",
 		Run: func(cmd *cobra.Command, args []string) {
 			m.bulkRun(conifig)
@@ -47,4 +38,17 @@ func (m *ApplyModule) CliConfig(conifig *Config) *cobra.Command {
 	}
 }
 
-func init() { Register("apply", func() Module { return &ApplyModule{} }) }
+// This is a stub method. It should always return nil.
+func (m *ApplyModule) Commit(config *Config, result any) error {
+	return nil
+}
+
+// This is a stub method. It should always return nil.
+func (m *ApplyModule) Run(anySpell any) error {
+	return nil
+}
+
+// This is a stub method. It should always return nil.
+func (m *ApplyModule) BulkRun(config *Config) error {
+	return nil
+}
