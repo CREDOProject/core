@@ -23,23 +23,23 @@ Install a pip package pinning it to a version:
 	credo pip numpy==1.26.0
 `
 
-type PipModule struct{}
+type pipModule struct{}
 
-type PipSpell struct {
+type pipSpell struct {
 	Name string `yaml:"name"`
 }
 
 // Function to check equality of two PipSpells
-func (s PipSpell) equals(t equatable) bool {
-	if o, ok := t.(PipSpell); ok {
+func (s pipSpell) equals(t equatable) bool {
+	if o, ok := t.(pipSpell); ok {
 		return s.Name == o.Name
 	}
 	return false
 }
 
-func (m *PipModule) Commit(config *Config, result any) error {
-	newEntry := result.(PipSpell)
-	if shouldAdd := Contains[PipSpell](config.Pip, newEntry); !shouldAdd {
+func (m *pipModule) Commit(config *Config, result any) error {
+	newEntry := result.(pipSpell)
+	if shouldAdd := Contains[pipSpell](config.Pip, newEntry); !shouldAdd {
 		return ErrAlreadyPresent
 	}
 	config.Pip = append(config.Pip, newEntry)
@@ -73,32 +73,32 @@ func getPipBinary() (*string, error) {
 	return &pipBinary, nil
 }
 
-func (m *PipModule) bareRun(p PipSpell) (PipSpell, error) {
+func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	// Setup a spell entry.
-	spell := PipSpell{
+	spell := pipSpell{
 		Name: p.Name,
 	}
 	pipBinary, err := getPipBinary()
 	if err != nil {
-		return PipSpell{}, err
+		return pipSpell{}, err
 	}
 
 	cmd, err := gopip.New(*pipBinary).Install(spell.Name).DryRun().Seal()
 	if err != nil {
-		return PipSpell{}, err
+		return pipSpell{}, err
 	}
 
 	err = cmd.Run(&gopip.RunOptions{
 		Output: os.Stdout,
 	})
 	if err != nil {
-		return PipSpell{}, err
+		return pipSpell{}, err
 	}
 
 	return spell, nil
 }
 
-func (m *PipModule) Run(anySpell any) error {
+func (m *pipModule) Run(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func (m *PipModule) Run(anySpell any) error {
 	}
 	downloadPath := path.Join(*project, pipModuleName)
 	cmd, err := gopip.New(*pipBinary).
-		Download(anySpell.(PipSpell).Name, downloadPath).
+		Download(anySpell.(pipSpell).Name, downloadPath).
 		Seal()
 	err = cmd.Run(&gopip.RunOptions{
 		Output: os.Stdout,
@@ -120,7 +120,7 @@ func (m *PipModule) Run(anySpell any) error {
 	return nil
 }
 
-func (m *PipModule) BulkRun(config *Config) error {
+func (m *pipModule) BulkRun(config *Config) error {
 	for _, ps := range config.Pip {
 		err := m.Run(ps)
 		if err != nil {
@@ -130,7 +130,7 @@ func (m *PipModule) BulkRun(config *Config) error {
 	return nil
 }
 
-func (m *PipModule) CliConfig(conifig *Config) *cobra.Command {
+func (m *pipModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     pipModuleName,
 		Short:   "Retrieves a python package.",
@@ -143,7 +143,7 @@ func (m *PipModule) CliConfig(conifig *Config) *cobra.Command {
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			spell, err := m.bareRun(PipSpell{
+			spell, err := m.bareRun(pipSpell{
 				Name: args[0],
 			})
 			if err != nil {
@@ -157,4 +157,4 @@ func (m *PipModule) CliConfig(conifig *Config) *cobra.Command {
 	}
 }
 
-func init() { Register(pipModuleName, func() Module { return &PipModule{} }) }
+func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }

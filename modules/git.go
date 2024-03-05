@@ -5,7 +5,6 @@ import (
 	"credo/project"
 	"credo/utils"
 	"fmt"
-	"log"
 	"path"
 	"strings"
 
@@ -24,9 +23,9 @@ Clone a git repository at a specific version tag:
 	credo git https://github.com/kendomaniac/docker4seq 2.1.2
 `
 
-type GitModule struct{}
+type gitModule struct{}
 
-func (m *GitModule) Commit(config *Config, result any) error {
+func (m *gitModule) Commit(config *Config, result any) error {
 	newEntry := result.(GitSpell)
 	if shouldAdd := Contains[GitSpell](config.Git, newEntry); !shouldAdd {
 		return ErrAlreadyPresent
@@ -35,7 +34,7 @@ func (m *GitModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
+func (m *gitModule) bareRun(p GitSpell) (GitSpell, error) {
 	// Logic to get the latest version or the specified version.
 	version := p.Version
 	if len(version) == 0 {
@@ -63,7 +62,7 @@ func (m *GitModule) bareRun(p GitSpell) (GitSpell, error) {
 	return spell, nil
 }
 
-func (m *GitModule) Run(anySpell any) error {
+func (m *gitModule) Run(anySpell any) error {
 	spell := anySpell.(GitSpell)
 
 	// Obtain the project path
@@ -86,7 +85,7 @@ func (m *GitModule) Run(anySpell any) error {
 	return nil
 }
 
-func (m *GitModule) BulkRun(config *Config) error {
+func (m *gitModule) BulkRun(config *Config) error {
 	for _, gs := range config.Git {
 		err := m.Run(gs)
 		if err != nil {
@@ -110,7 +109,7 @@ func (s GitSpell) equals(t equatable) bool {
 	return false
 }
 
-func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {
+func (m *gitModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     gitModuleName,
 		Short:   "Retrieves a remote git repository.",
@@ -146,4 +145,4 @@ func (m *GitModule) CliConfig(conifig *Config) *cobra.Command {
 	}
 }
 
-func init() { Register(gitModuleName, func() Module { return &GitModule{} }) }
+func init() { Register(gitModuleName, func() Module { return &gitModule{} }) }
