@@ -15,12 +15,23 @@ func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
 type aptModule struct{}
 
 type aptSpell struct {
-	Name string `yaml:"name"`
+	Name         string     `yaml:"name"`
+	Depencencies []aptSpell `yaml:"dependencies,omitempty"`
 }
 
 // Function to check equality of two aptSpells
 func (a aptSpell) equals(t equatable) bool {
 	if o, ok := t.(aptSpell); ok {
+		equality := len(o.Depencencies) == len(a.Depencencies)
+		if !equality {
+			return false
+		}
+		for i := range o.Depencencies {
+
+			equality = equality &&
+				strings.Compare(
+					o.Depencencies[i].Name, a.Depencencies[i].Name) == 0
+		}
 		return strings.Compare(a.Name, o.Name) == 0
 	}
 	return false
@@ -52,12 +63,22 @@ func (m *aptModule) CliConfig(config *Config) *cobra.Command {
 }
 
 func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
-	output, err := apt.InstallDry(&apt.Package{
+	aptPack := &apt.Package{
 		Name: spell.Name,
-	})
+	}
+	output, err := apt.InstallDry(aptPack)
 	logger.Get().Print(string(output))
 	if err != nil {
 		return aptSpell{}, err
+	}
+	depList, err := apt.GetDependencies(aptPack)
+	if err != nil {
+		return aptSpell{}, err
+	}
+	for _, dependency := range depList {
+		spell.Depencencies = append(spell.Depencencies, aptSpell{
+			Name: dependency,
+		})
 	}
 	return spell, nil
 }
