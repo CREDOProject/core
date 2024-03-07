@@ -2,6 +2,10 @@ package modules
 
 import (
 	"credo/logger"
+	"credo/project"
+	"fmt"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/CREDOProject/go-apt-client"
@@ -38,8 +42,20 @@ func (a aptSpell) equals(t equatable) bool {
 }
 
 // BulkRun implements Module.
-func (*aptModule) BulkRun(config *Config) error {
-	return nil // TODO: Implementation
+func (m *aptModule) BulkRun(config *Config) error {
+	for _, as := range config.Apt {
+		for _, dep := range as.Depencencies {
+			err := m.Run(dep)
+			if err != nil {
+				return err
+			}
+		}
+		err := m.Run(as)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // CliConfig implements Module.
@@ -94,6 +110,21 @@ func (*aptModule) Commit(config *Config, result any) error {
 }
 
 // Run implements Module.
-func (*aptModule) Run(any) error {
-	return nil // TODO: Implementation
+func (*aptModule) Run(anySpell any) error {
+	spell, ok := anySpell.(aptSpell)
+	if !ok {
+		return fmt.Errorf("Error converting to aptSpell")
+	}
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, aptModuleName)
+	os.MkdirAll(downloadPath, 0755)
+	aptPack := &apt.Package{
+		Name: spell.Name,
+	}
+	out, err := apt.Download(aptPack, downloadPath)
+	logger.Get().Print(string(out))
+	return err
 }
