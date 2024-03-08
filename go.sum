@@ -17,6 +17,10 @@ github.com/CREDOProject/go-apt-client v0.3.2 h1:a28q5qbuwmYZc+Quee7QIUdpAOgeQwJ9
 github.com/CREDOProject/go-apt-client v0.3.2/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
 github.com/CREDOProject/go-apt-client v0.3.3 h1:kayyohnFEdwlozEsKmFG1FVshKUCfpWAtPZLtTJJ0FE=
 github.com/CREDOProject/go-apt-client v0.3.3/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
+github.com/CREDOProject/go-apt-client v0.3.4 h1:lVOj8OdHnmpN6fVQ9BkO/qeStUF5nEwtH3il2Lp727U=
+github.com/CREDOProject/go-apt-client v0.3.4/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
+github.com/CREDOProject/go-apt-client v0.4.0 h1:x0N7vmvj06X3cI6mV6w7ppf3RBhr8nm320EbGllq8D0=
+github.com/CREDOProject/go-apt-client v0.4.0/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
 github.com/CREDOProject/go-isgiturl v1.0.0/go.mod h1:piuq92nTv3rEpyouSYNf7YMOafHQFaoK/pvFWMIUAG8=
 github.com/CREDOProject/go-pip v0.0.1 h1:yj2Ft7ZQ7PtsyHQSPRE18VyitekAjHq5PZHsAmJFXsY=
