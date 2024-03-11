@@ -8,6 +8,8 @@ func init() { Register(condaModuleName, func() Module { return &condaModule{} })
 
 type condaModule struct{}
 
+type condaSpell struct{}
+
 // BulkRun implements Module.
 func (c *condaModule) BulkRun(config *Config) error {
 	return nil
