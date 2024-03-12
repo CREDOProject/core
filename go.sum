@@ -21,6 +21,10 @@ github.com/CREDOProject/go-apt-client v0.3.4 h1:lVOj8OdHnmpN6fVQ9BkO/qeStUF5nEwt
 github.com/CREDOProject/go-apt-client v0.3.4/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
 github.com/CREDOProject/go-apt-client v0.4.0 h1:x0N7vmvj06X3cI6mV6w7ppf3RBhr8nm320EbGllq8D0=
 github.com/CREDOProject/go-apt-client v0.4.0/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
+github.com/CREDOProject/go-conda v0.1.0 h1:y3HpshKnUY7ohm2SqspTK72nbWh3eWeOidCq2Mn8DB8=
+github.com/CREDOProject/go-conda v0.1.0/go.mod h1:nj4ENF/gS5a+87fjP+aDIaeu+akohyRPtqfngDFb5qM=
+github.com/CREDOProject/go-conda v0.1.1 h1:oniGCr6lZKr3kxXQjxeofewVuDIfl/a+Oi4P5uphkKY=
+github.com/CREDOProject/go-conda v0.1.1/go.mod h1:d2YeiK6GMTTa+ve8rD6wRVc9O7kxxqpEHJ37L6RlCuI=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
 github.com/CREDOProject/go-isgiturl v1.0.0/go.mod h1:piuq92nTv3rEpyouSYNf7YMOafHQFaoK/pvFWMIUAG8=
 github.com/CREDOProject/go-pip v0.0.1 h1:yj2Ft7ZQ7PtsyHQSPRE18VyitekAjHq5PZHsAmJFXsY=
@@ -33,6 +37,8 @@ github.com/CREDOProject/sharedutils v0.0.1 h1:cAjaIqUMiK7wNfXh1X04cio4LcLzXPEhbE
 github.com/CREDOProject/sharedutils v0.0.1/go.mod h1:lOd6evmYnKPa+Q191hZMAFXttCWbhDmMAj33n3sCvAE=
 github.com/CREDOProject/sharedutils v0.0.3 h1:ZuV+GOVcJvsZhzp21iToQJAE+toepxP/a8AVGjZkKeU=
 github.com/CREDOProject/sharedutils v0.0.3/go.mod h1:lOd6evmYnKPa+Q191hZMAFXttCWbhDmMAj33n3sCvAE=
+github.com/CREDOProject/sharedutils v0.0.4 h1:jMKlOyTDQxzF+oGCcqzopuMzM/JNtu8ETfSdgVxTyXo=
+github.com/CREDOProject/sharedutils v0.0.4/go.mod h1:lOd6evmYnKPa+Q191hZMAFXttCWbhDmMAj33n3sCvAE=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
