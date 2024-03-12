@@ -129,7 +129,7 @@ func (m *pipModule) BulkRun(config *Config) error {
 	return nil
 }
 
-func (m *pipModule) CliConfig(conifig *Config) *cobra.Command {
+func (m *pipModule) CliConfig(config *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     pipModuleName,
 		Short:   "Retrieves a python package.",
@@ -148,7 +148,7 @@ func (m *pipModule) CliConfig(conifig *Config) *cobra.Command {
 			if err != nil {
 				logger.Get().Fatal(err)
 			}
-			err = m.Commit(conifig, spell)
+			err = m.Commit(config, spell)
 			if err != nil {
 				logger.Get().Fatal(err)
 			}
