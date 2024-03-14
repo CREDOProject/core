@@ -34,6 +34,8 @@ type ModuleFactory = func() Module
 // Module registry.
 var Modules = map[string]ModuleFactory{}
 
+// Interface used to define the functionality of a module.
+// A Module should implement this interface to be used in CREDO.
 type Module interface {
 	// Commit adds a configuration entry for a said module.
 	Commit(config *Config, result any) error
