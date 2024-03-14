@@ -14,6 +14,13 @@ import (
 
 const aptModuleName = "apt"
 
+const aptModuleShort = "Retrieves an apt package and its depenencies."
+
+const aptModuleExample = `
+Install a apt package:
+	credo apt python3
+`
+
 func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
 
 type aptModule struct{}
@@ -61,20 +68,46 @@ func (m *aptModule) BulkRun(config *Config) error {
 // CliConfig implements Module.
 func (m *aptModule) CliConfig(config *Config) *cobra.Command {
 	return &cobra.Command{
-		Use: aptModuleName,
-		Run: func(cmd *cobra.Command, args []string) {
-			name := args[0]
-			spell, err := m.bareRun(aptSpell{
-				Name: name,
-			})
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-			err = m.Commit(config, spell)
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-		},
+		Args:    m.cobraArgs(),
+		Example: aptModuleExample,
+		Run:     m.cobraRun(config),
+		Short:   aptModuleShort,
+		Use:     aptModuleName,
+	}
+}
+
+// Function used to validate the arguments passed to the apt command.
+// If no arguments are passed, it returns an error.
+// Otherwise it returns nil.
+//
+// Intended to be used by cobra.
+func (m *aptModule) cobraArgs() func(*cobra.Command, []string) error {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("%s module requires at least one argument.",
+				aptModuleName)
+		}
+		return nil
+	}
+}
+
+// Function used to run the module from the command line.
+// It serves as an entry point to the bare run of the aptModule.
+//
+// Intended to be used by cobra.
+func (m *aptModule) cobraRun(config *Config) func(*cobra.Command, []string) {
+	return func(cmd *cobra.Command, args []string) {
+		name := args[0]
+		spell, err := m.bareRun(aptSpell{
+			Name: name,
+		})
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+		err = m.Commit(config, spell)
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
 	}
 }
 
