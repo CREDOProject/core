@@ -5,12 +5,12 @@ import (
 	"credo/project"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 
 	gopip "github.com/CREDOProject/go-pip"
 	"github.com/CREDOProject/go-pip/utils"
-	pythonvenv "github.com/CREDOProject/go-pythonvenv"
 	"github.com/spf13/cobra"
 )
 
@@ -57,11 +57,12 @@ func setupPythonVenv(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	venv, err := pythonvenv.Create(path)
-	if err != nil {
-		return "", err
-	}
-	return venv.Path, nil
+	exec.Command("python3", "-m", "venv", path).Run()
+	//	venv, err := pythonvenv.Create(path)
+	//	if err != nil {
+	//		return "", err
+	//	}
+	return path, nil
 }
 
 func getPipBinary() (*string, error) {
