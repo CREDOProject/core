@@ -16,6 +16,8 @@ import (
 
 const pipModuleName = "pip"
 
+const pipModuleShort = "Retrieves a python package and its dependencies."
+
 const pipModuleExample = `
 Install a pip package:
 	credo pip numpy
@@ -40,6 +42,7 @@ func (s pipSpell) equals(t equatable) bool {
 	return false
 }
 
+// Commit implements Module.
 func (m *pipModule) Commit(config *Config, result any) error {
 	newEntry := result.(pipSpell)
 	if Contains(config.Pip, newEntry) {
@@ -50,6 +53,10 @@ func (m *pipModule) Commit(config *Config, result any) error {
 }
 
 func setupPythonVenv(path string) (string, error) {
+	err := os.MkdirAll(path, 0755)
+	if err != nil {
+		return "", err
+	}
 	venv, err := pythonvenv.Create(path)
 	if err != nil {
 		return "", err
@@ -97,6 +104,7 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	return p, nil
 }
 
+// Run implements Module.
 func (m *pipModule) Run(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
@@ -119,6 +127,7 @@ func (m *pipModule) Run(anySpell any) error {
 	return nil
 }
 
+// BulkRun implements Module.
 func (m *pipModule) BulkRun(config *Config) error {
 	for _, ps := range config.Pip {
 		err := m.Run(ps)
@@ -129,29 +138,47 @@ func (m *pipModule) BulkRun(config *Config) error {
 	return nil
 }
 
+// Function used to validate the arguments passed to the pip command.
+// If no arguments are passed, it returns an error.
+// Otherwise it returns nil.
+//
+// Intended to be used by cobra.
+func (m *pipModule) cobraArgs() func(*cobra.Command, []string) error {
+	return func(_ *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("%s module requires at least one argument.",
+				pipModuleName)
+		}
+		return nil
+	}
+}
+
+// Function used to run the module from the command line.
+// It serves as an entry point to the bare run of the pipModule.
+//
+// Intended to be used by cobra.
+func (m *pipModule) cobraRun(config *Config) func(*cobra.Command, []string) {
+	return func(c *cobra.Command, args []string) {
+		spell, err := m.bareRun(pipSpell{
+			Name: args[0],
+		})
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+		err = m.Commit(config, spell)
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+	}
+}
+
+// CliConfig implements Module.
 func (m *pipModule) CliConfig(config *Config) *cobra.Command {
 	return &cobra.Command{
-		Use:     pipModuleName,
-		Short:   "Retrieves a python package.",
+		Args:    m.cobraArgs(),
 		Example: pipModuleExample,
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("%s module requires at least one argument.",
-					pipModuleName)
-			}
-			return nil
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			spell, err := m.bareRun(pipSpell{
-				Name: args[0],
-			})
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-			err = m.Commit(config, spell)
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-		},
+		Run:     m.cobraRun(config),
+		Short:   pipModuleShort,
+		Use:     pipModuleName,
 	}
 }
