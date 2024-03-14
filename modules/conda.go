@@ -4,6 +4,7 @@ import (
 	"credo/logger"
 	"credo/project"
 	"errors"
+	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -14,6 +15,16 @@ import (
 )
 
 const condaModuleName = "conda"
+
+const condaModuleShort = "Retrieves a conda package and its dependencies."
+
+const condaModuleExample = `
+Install a conda package:
+	credo conda numpy
+
+Install a conda package from a channel:
+	credo conda scipy --channel=bioconda
+`
 
 func init() { Register(condaModuleName, func() Module { return &condaModule{} }) }
 
@@ -53,23 +64,53 @@ func (c *condaModule) BulkRun(config *Config) error {
 	return nil
 }
 
+// Function used to run the module from the command line.
+// It serves as an entry point to the bare run of the condaModule.
+//
+// Intended to be used by cobra.
+func (c *condaModule) cobraRun(config *Config) func(*cobra.Command, []string) {
+	return func(cmd *cobra.Command, args []string) {
+		channel, _ := cmd.Flags().GetString("channel")
+		spell, err := c.bareRun(condaSpell{
+			Name:    args[0],
+			Channel: channel,
+		})
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+		err = c.Commit(config, spell)
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+	}
+}
+
+// Function used to validate the arguments passed to the conda command.
+// If no arguments are passed, it returns an error.
+// Otherwise it returns nil.
+//
+// Intended to be used by cobra.
+func (m *condaModule) cobraArgs() func(*cobra.Command, []string) error {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("%s module requires at least one argument.",
+				condaModuleName)
+		}
+		return nil
+	}
+}
+
 // CliConfig implements Module.
 func (c *condaModule) CliConfig(config *Config) *cobra.Command {
-	return &cobra.Command{
-		Use: condaModuleName,
-		Run: func(cmd *cobra.Command, args []string) {
-			spell, err := c.bareRun(condaSpell{
-				Name: args[0],
-			})
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-			err = c.Commit(config, spell)
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-		},
+	command := &cobra.Command{
+		Short:   condaModuleShort,
+		Example: condaModuleExample,
+		Use:     condaModuleName,
+		Run:     c.cobraRun(config),
+		Args:    c.cobraArgs(),
 	}
+	command.PersistentFlags().String("channel", "", "Conda channel to use.")
+	return command
 }
 
 // Commit implements Module.
