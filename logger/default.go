@@ -14,6 +14,6 @@ func Get() *log.Logger {
 		return logger
 	}
 
-	logger = log.New(os.Stdout, "", log.Ltime)
+	logger = log.New(os.Stdout, "", log.Ltime|log.LstdFlags|log.Lshortfile)
 	return logger
 }
