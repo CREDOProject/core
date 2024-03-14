@@ -42,6 +42,11 @@ func (c condaSpell) equals(t equatable) bool {
 
 // BulkRun implements Module.
 func (c *condaModule) BulkRun(config *Config) error {
+	for _, cs := range config.Conda {
+		if err := c.Run(cs); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
