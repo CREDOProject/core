@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/spf13/cobra"
 
@@ -15,6 +16,8 @@ import (
 )
 
 const gitModuleName = "git"
+
+const gitModuleShort = "Retrieves a remote git repository."
 
 const gitModuleExample = `
 Clone a git repository:
@@ -56,6 +59,7 @@ func (m *gitModule) bareRun(p gitSpell) (gitSpell, error) {
 		Depth:             1,
 		SingleBranch:      true,
 		RecurseSubmodules: 1,
+		ReferenceName:     plumbing.NewBranchReferenceName(version),
 	})
 
 	if err != nil {
@@ -81,6 +85,7 @@ func (m *gitModule) Run(anySpell any) error {
 		Depth:             1,
 		SingleBranch:      true,
 		RecurseSubmodules: git.DefaultSubmoduleRecursionDepth,
+		ReferenceName:     plumbing.NewBranchReferenceName(spell.Version),
 	})
 	if err != nil {
 		return err
@@ -116,7 +121,7 @@ func (s gitSpell) equals(t equatable) bool {
 func (m *gitModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     gitModuleName,
-		Short:   "Retrieves a remote git repository.",
+		Short:   gitModuleShort,
 		Example: gitModuleExample,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
