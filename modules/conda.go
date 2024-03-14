@@ -2,7 +2,10 @@ package modules
 
 import (
 	"credo/logger"
+	"credo/project"
+	"errors"
 	"os"
+	"path"
 	"strings"
 
 	goconda "github.com/CREDOProject/go-conda"
@@ -101,6 +104,35 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 }
 
 // Run implements Module.
-func (c *condaModule) Run(any) error {
+func (c *condaModule) Run(anySpell any) error {
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	condaBinary, err := condautils.DetectCondaBinary()
+	if err != nil {
+		return err
+	}
+
+	spell, ok := anySpell.(condaSpell)
+	if !ok {
+		return errors.New("Error converting.")
+	}
+
+	downloadPath := path.Join(*project, condaModuleName)
+	cmd, err := goconda.
+		New(condaBinary, downloadPath, downloadPath).
+		Download(&goconda.PackageInfo{
+			PackageName: spell.Name,
+			Channel:     spell.Channel,
+		}, downloadPath).Seal()
+
+	err = cmd.Run(&goconda.RunOptions{
+		Output: os.Stdout,
+	})
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
