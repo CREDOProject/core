@@ -8,10 +8,13 @@ import (
 )
 
 var (
+	// ErrAlreadyPresent SHOULD be used by a Module to attest that it's
+	// configuration in the context of a `spell` is already present.
 	ErrAlreadyPresent = errors.New("Entry already present.")
 )
 
-// equatable provides a method to check equality between two objects.
+// equatable is an interface that provides a method to check equality between
+// two objects.
 type equatable interface {
 	// equals returns true if the target object passed is equal to the
 	// calling object.

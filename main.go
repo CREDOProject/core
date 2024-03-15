@@ -7,6 +7,9 @@ import (
 	"credo/modules"
 	"credo/storage"
 
+	"fmt"
+	"os"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -25,7 +28,10 @@ func main() {
 			cmd.RootCmd.AddCommand(config)
 		}
 	}
-	cmd.Execute()
+	if err := cmd.RootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	marshal, err := yaml.Marshal(fullConfig)
 	if err != nil {
 		logger.Fatal("Can't marshal")

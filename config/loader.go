@@ -6,7 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Parses configuration file and outputs a Config structure.
+// FromFile parses the configuration file and outputs a modules.Config.
 func FromFile(configFile []byte) (modules.Config, error) {
 	var config modules.Config
 

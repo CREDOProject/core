@@ -8,7 +8,7 @@ import (
 // Global logger.
 var logger *log.Logger
 
-// Gets global logger.
+// Get returns a global logger.
 func Get() *log.Logger {
 	if logger != nil {
 		return logger

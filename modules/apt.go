@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"regexp"
-	"strings"
 
 	"github.com/CREDOProject/go-apt-client"
 	"github.com/spf13/cobra"
@@ -24,8 +23,10 @@ Install a apt package:
 
 var isAptOptional = regexp.MustCompile(`\<(?P<name>..*)\>`)
 
+// Registers the aptModule.
 func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
 
+// aptModule is used to manage the apt scope in the credospell configuration.
 type aptModule struct{}
 
 type aptSpell struct {
@@ -34,7 +35,15 @@ type aptSpell struct {
 	Depencencies []aptSpell `yaml:"dependencies,omitempty"`
 }
 
-// Function to check equality of two aptSpells
+// Function used to check if two aptSpell objects are equal.
+// It takes in an equatable interface as a parameter and returns a boolean
+// value indicating whether the two objects are equal or not.
+// The function first checks if the input parameter t is of type aptSpell.
+//
+// If it is, it proceeds to compare the Name and Optional of the two
+// objects and all its other Depencencies.
+// The function returns true if the two objects are equal.
+// Otherwise, it returns false.
 func (a aptSpell) equals(t equatable) bool {
 	if o, ok := t.(aptSpell); ok {
 		equality := len(o.Depencencies) == len(a.Depencencies)
@@ -42,12 +51,10 @@ func (a aptSpell) equals(t equatable) bool {
 			return false
 		}
 		for i := range o.Depencencies {
-
 			equality = equality &&
-				strings.Compare(
-					o.Depencencies[i].Name, a.Depencencies[i].Name) == 0
+				o.Depencencies[i].equals(a.Depencencies[i])
 		}
-		return strings.Compare(a.Name, o.Name) == 0
+		return equality
 	}
 	return false
 }

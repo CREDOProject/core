@@ -27,8 +27,10 @@ Clone a git repository at a specific version tag:
 	credo git https://github.com/kendomaniac/docker4seq 2.1.2
 `
 
+// Registers the gitModule.
 func init() { Register(gitModuleName, func() Module { return &gitModule{} }) }
 
+// gitModule is used to manage the git scope in the credospell configuration.
 type gitModule struct{}
 
 func (m *gitModule) Commit(config *Config, result any) error {
@@ -109,7 +111,15 @@ type gitSpell struct {
 	Version string `yaml:"version"`
 }
 
-// Function to check equality of two GitSpells
+// Function used to check if two aptSpell objects are equal.
+// It takes in an equatable interface as a parameter and returns a boolean
+// value indicating whether the two objects are equal or not.
+// The function first checks if the input parameter t is of type gitSpell.
+//
+// If it is, it proceeds to compare the URL and Version of the two
+// objects.
+// The function returns true if the two objects are equal.
+// Otherwise, it returns false.
 func (s gitSpell) equals(t equatable) bool {
 	if o, ok := t.(gitSpell); ok {
 		return strings.Compare(s.URL, o.URL) == 0 &&
@@ -118,38 +128,56 @@ func (s gitSpell) equals(t equatable) bool {
 	return false
 }
 
-func (m *gitModule) CliConfig(conifig *Config) *cobra.Command {
+// Function used to run the module from the command line.
+// It serves as an entry point to the bare run of the gitModule.
+//
+// Intended to be used by cobra.
+func (m *gitModule) cobraRun(config *Config) func(*cobra.Command, []string) {
+	return func(cmd *cobra.Command, args []string) {
+		version := ""
+		if len(args) > 1 {
+			version = args[1]
+		}
+		spell, err := m.bareRun(gitSpell{
+			URL:     args[0],
+			Version: version,
+		})
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+		err = m.Commit(config, spell)
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+	}
+}
+
+// Function used to validate the arguments passed to the git command.
+// If no arguments are passed, it returns an error.
+// Otherwise it returns nil.
+//
+// Intended to be used by cobra.
+func (m *gitModule) cobraArgs() func(*cobra.Command, []string) error {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("%s module requires at least one argument.",
+				gitModuleName)
+		}
+		url := args[0]
+		if !goisgiturl.IsGitUrl(url) {
+			return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
+		}
+		return nil
+	}
+}
+
+// CliConfig implements Module.
+func (m *gitModule) CliConfig(config *Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     gitModuleName,
 		Short:   gitModuleShort,
 		Example: gitModuleExample,
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				return fmt.Errorf("%s module requires at least one argument.",
-					gitModuleName)
-			}
-			url := args[0]
-			if !goisgiturl.IsGitUrl(url) {
-				return fmt.Errorf("\"%s\" doesn't look like a git uri.", url)
-			}
-			return nil
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			version := ""
-			if len(args) > 1 {
-				version = args[1]
-			}
-			spell, err := m.bareRun(gitSpell{
-				URL:     args[0],
-				Version: version,
-			})
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-			err = m.Commit(conifig, spell)
-			if err != nil {
-				logger.Get().Fatal(err)
-			}
-		},
+		Args:    m.cobraArgs(),
+		Run:     m.cobraRun(config),
 	}
 }

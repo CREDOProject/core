@@ -26,15 +26,25 @@ Install a pip package pinning it to a version:
 	credo pip numpy==1.26.0
 `
 
+// Registers the pipModule.
 func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
 
+// pipModule is used to manage the pip scope in the credospell configuration.
 type pipModule struct{}
 
 type pipSpell struct {
 	Name string `yaml:"name"`
 }
 
-// Function to check equality of two PipSpells
+// Function used to check if two pipSpell objects are equal.
+// It takes in an equatable interface as a parameter and returns a boolean
+// value indicating whether the two objects are equal or not.
+// The function first checks if the input parameter t is of type pipSpell.
+//
+// If it is, it proceeds to compare the Name of the two
+// objects.
+// The function returns true if the two objects are equal.
+// Otherwise, it returns false.
 func (s pipSpell) equals(t equatable) bool {
 	if o, ok := t.(pipSpell); ok {
 		return strings.Compare(s.Name, o.Name) == 0

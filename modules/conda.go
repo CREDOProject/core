@@ -26,8 +26,10 @@ Install a conda package from a channel:
 	credo conda scipy --channel=bioconda
 `
 
+// Registers the condaModule.
 func init() { Register(condaModuleName, func() Module { return &condaModule{} }) }
 
+// condaModule is used to manage the conda scope in the credospell configuration.
 type condaModule struct{}
 
 type condaSpell struct {
