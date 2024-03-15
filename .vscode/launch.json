@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "type": "delve",
+      "request": "launch",
+      "name": "Launch Pip",
+      "program": ".",
+      "args": ["pip", "numpy"]
+    }
+  ]
+}
