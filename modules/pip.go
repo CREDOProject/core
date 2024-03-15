@@ -53,10 +53,6 @@ func (m *pipModule) Commit(config *Config, result any) error {
 }
 
 func setupPythonVenv(path string) (string, error) {
-	err := os.MkdirAll(path, 0755)
-	if err != nil {
-		return "", err
-	}
 	venv, err := pythonvenv.Create(path)
 	if err != nil {
 		return "", err
