@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/CREDOProject/go-apt-client"
@@ -21,12 +22,15 @@ Install a apt package:
 	credo apt python3
 `
 
+var isAptOptional = regexp.MustCompile(`\<(?P<name>..*)\>`)
+
 func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
 
 type aptModule struct{}
 
 type aptSpell struct {
 	Name         string     `yaml:"name"`
+	Optional     bool       `yaml:"optional,omitempty"`
 	Depencencies []aptSpell `yaml:"dependencies,omitempty"`
 }
 
@@ -125,8 +129,16 @@ func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
 		return aptSpell{}, err
 	}
 	for _, dependency := range depList {
+		isOptional := isAptOptional.MatchString(dependency)
+		cleanDependency := dependency
+		matches := isAptOptional.FindStringSubmatch(dependency)
+		nameIndex := isAptOptional.SubexpIndex("name")
+		if nameIndex != -1 && isOptional {
+			cleanDependency = matches[nameIndex]
+		}
 		spell.Depencencies = append(spell.Depencencies, aptSpell{
-			Name: dependency,
+			Name:     cleanDependency,
+			Optional: isOptional,
 		})
 	}
 	return spell, nil
