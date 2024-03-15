@@ -23,7 +23,7 @@ require (
 	github.com/CREDOProject/go-apt-client v0.4.0
 	github.com/CREDOProject/go-conda v0.1.1
 	github.com/CREDOProject/go-isgiturl v1.0.0
-	github.com/CREDOProject/go-pythonvenv v0.1.1
+	github.com/CREDOProject/go-pythonvenv v0.1.0
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
