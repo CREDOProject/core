@@ -38,7 +38,11 @@ func (c cranSpell) equals(t equatable) bool {
 
 // BulkRun implements Module.
 func (c *cranModule) BulkRun(config *Config) error {
-	// TODO: implement BulkRun
+	for _, cs := range config.Cran {
+		if err := c.Run(cs); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
