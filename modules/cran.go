@@ -21,9 +21,9 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 type cranModule struct{}
 
 type cranSpell struct {
-	packageName      string
-	packageDirectory string
-	repository       string
+	PackageName      string `yaml:"package_name,omitempty"`
+	PackageDirectory string `yaml:"package_directory,omitempty"`
+	Repository       string `yaml:"repository,omitempty"`
 }
 
 // equals checks if two cranSpell objects are equal.
@@ -33,8 +33,8 @@ func (c cranSpell) equals(t equatable) bool {
 	if !ok {
 		return false
 	}
-	return strings.Compare(s.packageName, c.packageName) == 0 &&
-		strings.Compare(s.repository, c.repository) == 0
+	return strings.Compare(s.PackageName, c.PackageName) == 0 &&
+		strings.Compare(s.Repository, c.Repository) == 0
 }
 
 // BulkRun implements Module.
@@ -61,8 +61,7 @@ func (c *cranModule) cobraArgs() func(*cobra.Command, []string) error {
 //
 // This function is inteded to be used by cobra.
 func (c *cranModule) cobraRun(_ *Config) func(*cobra.Command, []string) {
-	return func(c *cobra.Command, s []string) {
-		// TODO: Implement cobraRun
+	return func(ccmd *cobra.Command, s []string) {
 	}
 }
 

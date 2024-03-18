@@ -13,6 +13,16 @@ github.com/CREDOProject/go-pythonvenv v0.1.0 h1:7E23LCuwpwsOaGbJV4u+WYdpGWDnJ4et
 github.com/CREDOProject/go-pythonvenv v0.1.0/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
 github.com/CREDOProject/go-pythonvenv v0.1.2 h1:69HushZb4OwAw3j7S6WoYTragKRB+fuzmyWpmWzYjmU=
 github.com/CREDOProject/go-pythonvenv v0.1.2/go.mod h1:DMv641yuosSrGjXIcIAMlk0DOm29MJBb1mIShpEqq6Q=
+github.com/CREDOProject/go-rcran v0.0.2 h1:4f0ln0S9pETTp9YMvpArsn2auTDEHocj75mnercODlk=
+github.com/CREDOProject/go-rcran v0.0.2/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.0.3 h1:4YXI4ugcV0XEix9CqF/VvaBkNy4ClCNt6wZfoVZ+JM4=
+github.com/CREDOProject/go-rcran v0.0.3/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.0.4 h1:Nu3udFcKCBeRQLIwPPTbVWSD1X4dwLLFLy2anxSOlV8=
+github.com/CREDOProject/go-rcran v0.0.4/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.0.5 h1:WxcWmKf/k5Dxkg0ng6IfFmtTyreQWfXohuYwL/+EBqU=
+github.com/CREDOProject/go-rcran v0.0.5/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rscript v0.0.1 h1:FhOeUgA7+Ga3SiXb2quFBlIPBP2dN8Gw5snXfD4xraI=
+github.com/CREDOProject/go-rscript v0.0.1/go.mod h1:u53h3+jFe3prvVLoVDfG9utigCLwGv+mJg+nkP5Ltd0=
 github.com/CREDOProject/sharedutils v0.0.4 h1:jMKlOyTDQxzF+oGCcqzopuMzM/JNtu8ETfSdgVxTyXo=
 github.com/CREDOProject/sharedutils v0.0.4/go.mod h1:lOd6evmYnKPa+Q191hZMAFXttCWbhDmMAj33n3sCvAE=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
