@@ -6,4 +6,5 @@ type Config struct {
 	Pip   []pipSpell   `yaml:"pip,omitempty"`
 	Apt   []aptSpell   `yaml:"apt,omitempty"`
 	Conda []condaSpell `yaml:"conda,omitempty"`
+	Cran  []cranSpell  `yaml:"cran,omitempty"`
 }
