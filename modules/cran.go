@@ -1,6 +1,10 @@
 package modules
 
-import "github.com/spf13/cobra"
+import (
+	"strings"
+
+	"github.com/spf13/cobra"
+)
 
 const cranModuleName = "cran"
 
@@ -15,12 +19,21 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 // cranModule is used to manage the CARN scope in the credospell configuration.
 type cranModule struct{}
 
-type cranSpell struct{}
+type cranSpell struct {
+	packageName      string
+	packageDirectory string
+	repository       string
+}
 
 // equals checks if two cranSpell objects are equal.
 func (c cranSpell) equals(t equatable) bool {
 	// TODO: implement equality check.
-	return true
+	s, ok := t.(cranSpell)
+	if !ok {
+		return false
+	}
+	return strings.Compare(s.packageName, c.packageName) == 0 &&
+		strings.Compare(s.repository, c.repository) == 0
 }
 
 // BulkRun implements Module.
