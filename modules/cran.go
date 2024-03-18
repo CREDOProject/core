@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -78,7 +79,14 @@ func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 
 // Commit implements Module.
 func (c *cranModule) Commit(config *Config, result any) error {
-	// TODO: implement Commit
+	newEntry, ok := result.(cranSpell)
+	if !ok {
+		return fmt.Errorf("Error Converting") //TODO: unify errors.
+	}
+	if Contains(config.Cran, newEntry) {
+		return ErrAlreadyPresent
+	}
+	config.Cran = append(config.Cran, newEntry)
 	return nil
 }
 
