@@ -21,6 +21,10 @@ github.com/CREDOProject/go-rcran v0.0.4 h1:Nu3udFcKCBeRQLIwPPTbVWSD1X4dwLLFLy2an
 github.com/CREDOProject/go-rcran v0.0.4/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
 github.com/CREDOProject/go-rcran v0.0.5 h1:WxcWmKf/k5Dxkg0ng6IfFmtTyreQWfXohuYwL/+EBqU=
 github.com/CREDOProject/go-rcran v0.0.5/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.0.6 h1:f/Or9MstGWV8p3RZqeEdT/d/59v20fUA033JX7pP7lQ=
+github.com/CREDOProject/go-rcran v0.0.6/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.1.0 h1:edihjO0VukrTKAydoYv8WDxtThVZynz6a8zl9Kx271s=
+github.com/CREDOProject/go-rcran v0.1.0/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
 github.com/CREDOProject/go-rscript v0.0.1 h1:FhOeUgA7+Ga3SiXb2quFBlIPBP2dN8Gw5snXfD4xraI=
 github.com/CREDOProject/go-rscript v0.0.1/go.mod h1:u53h3+jFe3prvVLoVDfG9utigCLwGv+mJg+nkP5Ltd0=
 github.com/CREDOProject/sharedutils v0.0.4 h1:jMKlOyTDQxzF+oGCcqzopuMzM/JNtu8ETfSdgVxTyXo=
