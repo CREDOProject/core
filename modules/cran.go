@@ -94,6 +94,27 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 		return nil, err
 	}
 	tempdir := os.TempDir()
+	// TODO: Separate for bioconductor
+	if c.BioConductor {
+		return nil, nil
+	} else {
+		return m.installFromCran(c, tempdir, bin)
+	}
+}
+
+func (m *cranModule) installFromBioconductor(
+	c cranSpell,
+	tempdir string,
+	bin string,
+) (*cranSpell, error) {
+	return nil, nil
+}
+
+func (m *cranModule) installFromCran(
+	c cranSpell,
+	tempdir string,
+	bin string,
+) (*cranSpell, error) {
 	downloadOptions := &rcran.DownloadOptions{
 		PackageName:          c.PackageName,
 		DestinationDirectory: tempdir,
@@ -171,11 +192,12 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 			BioConductor: isBioconductor,
 		}, cfg)
 		if err != nil {
-			logger.Get().Fatal(err)
+			logger.Get().Print(err)
+			return
 		}
 		err = c.Commit(cfg, spell)
 		if err != nil {
-			logger.Get().Fatal(err)
+			logger.Get().Print(err)
 		}
 	}
 }
