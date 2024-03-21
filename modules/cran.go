@@ -14,12 +14,16 @@ import (
 )
 
 const cranModuleName = "cran"
+const bioconductorModuleName = "bioconductor"
 
 const cranModuleShort = "Retrieves a CRAN package and its dependencies."
 
 const cranModuleExample = `
 Install a package from CRAN
 	credo cran abind
+
+Install a package from BioConductor
+	credo bioconductor <>
 `
 
 // Registers the carnModule.
@@ -29,9 +33,10 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 type cranModule struct{}
 
 type cranSpell struct {
-	PackageName string `yaml:"package_name,omitempty"`
-	PackagePath string `yaml:"package_path,omitempty"`
-	Repository  string `yaml:"repository,omitempty"`
+	PackageName  string `yaml:"package_name,omitempty"`
+	PackagePath  string `yaml:"package_path,omitempty"`
+	Repository   string `yaml:"repository,omitempty"`
+	BioConductor bool   `yaml:"bioconductor,omitempty"`
 }
 
 // spellFromInstallOptions returns a new cran spell from *rcran.InstallOptions.
@@ -77,7 +82,13 @@ func (c *cranModule) BulkRun(config *Config) error {
 	return nil
 }
 
-func (m *cranModule) bareRun(c cranSpell) (*cranSpell, error) {
+func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
+	if c.BioConductor {
+		err := m.installBioconductor(cfg)
+		if err != nil {
+			return nil, err
+		}
+	}
 	bin, err := rscript.DetectRscriptBinary()
 	if err != nil {
 		return nil, err
@@ -106,8 +117,28 @@ func (m *cranModule) bareRun(c cranSpell) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
+	if path == "" {
+		return nil, fmt.Errorf("Error downloading package.")
+	}
+
 	finalSpell.PackagePath = path
 	return finalSpell, nil
+}
+
+// installBioconductor runs the command in an opinionated fashion to install
+// bioconductor.
+//
+// Used if cranSpell.BioConductor is set.
+func (m *cranModule) installBioconductor(cfg *Config) error {
+	spell, err := m.bareRun(cranSpell{
+		PackageName:  "BiocManager",
+		BioConductor: false,
+	}, cfg)
+	if err != nil {
+		return err
+	}
+	err = m.Commit(cfg, spell)
+	return err
 }
 
 // cobraArgs is used to validate the arguments passed to the cran command.
@@ -129,12 +160,16 @@ func (c *cranModule) cobraArgs() func(*cobra.Command, []string) error {
 // This function is inteded to be used by cobra.
 func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
+		isBioconductor := strings.Compare(
+			cmd.CalledAs(),
+			bioconductorModuleName) == 0
 		packageName := args[0]
 		repository, _ := cmd.Flags().GetString("repository")
 		spell, err := c.bareRun(cranSpell{
-			PackageName: packageName,
-			Repository:  repository,
-		})
+			PackageName:  packageName,
+			Repository:   repository,
+			BioConductor: isBioconductor,
+		}, cfg)
 		if err != nil {
 			logger.Get().Fatal(err)
 		}
@@ -149,10 +184,11 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 	command := &cobra.Command{
 		Args:    c.cobraArgs(),
-		Example: pipModuleExample,
+		Example: cranModuleExample,
 		Run:     c.cobraRun(config),
 		Short:   cranModuleShort,
 		Use:     cranModuleName,
+		Aliases: []string{bioconductorModuleName},
 	}
 	command.PersistentFlags().String("repository", "", "Repository to use.")
 	return command
