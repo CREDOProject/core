@@ -64,7 +64,7 @@ func (c cranSpell) equals(t equatable) bool {
 		return false
 	}
 	return strings.Compare(s.PackageName, c.PackageName) == 0 &&
-		strings.Compare(s.Repository, c.Repository) == 0
+		strings.Compare(s.PackagePath, c.PackagePath) == 0
 }
 
 // BulkRun implements Module.
