@@ -105,7 +105,7 @@ func (m *cranModule) installFromBioconductor(
 	_ cranSpell,
 	_ string,
 ) (*cranSpell, error) {
-	return nil, nil
+	panic("not implemented")
 }
 
 func (m *cranModule) bareRunFromCranSingle(
