@@ -95,16 +95,15 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 		return nil, err
 	}
 	if c.BioConductor {
-		return nil, nil
+		return m.installFromBioconductor(c, bin)
 	} else {
 		return m.bareRunFromCran(c, bin)
 	}
 }
 
 func (m *cranModule) installFromBioconductor(
-	c cranSpell,
-	tempdir string,
-	bin string,
+	_ cranSpell,
+	_ string,
 ) (*cranSpell, error) {
 	return nil, nil
 }
