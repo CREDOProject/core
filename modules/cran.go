@@ -23,7 +23,7 @@ Install a package from CRAN
 	credo cran abind
 
 Install a package from BioConductor
-	credo bioconductor <>
+	credo bioconductor GenomicRanges
 `
 
 // Registers the carnModule.
