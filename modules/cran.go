@@ -33,10 +33,11 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 type cranModule struct{}
 
 type cranSpell struct {
-	PackageName  string `yaml:"package_name,omitempty"`
-	PackagePath  string `yaml:"package_path,omitempty"`
-	Repository   string `yaml:"repository,omitempty"`
-	BioConductor bool   `yaml:"bioconductor,omitempty"`
+	PackageName  string      `yaml:"package_name,omitempty"`
+	PackagePath  string      `yaml:"package_path,omitempty"`
+	Repository   string      `yaml:"repository,omitempty"`
+	BioConductor bool        `yaml:"bioconductor,omitempty"`
+	Dependencies []cranSpell `yaml:"dependencies,omitempty"`
 }
 
 // spellFromInstallOptions returns a new cran spell from *rcran.InstallOptions.
