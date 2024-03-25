@@ -40,17 +40,6 @@ type cranSpell struct {
 	Dependencies []cranSpell `yaml:"dependencies,omitempty"`
 }
 
-// spellFromInstallOptions returns a new cran spell from *rcran.InstallOptions.
-func (*cranModule) spellFromInstallOptions(
-	options *rcran.InstallOptions,
-) *cranSpell {
-	spell := &cranSpell{
-		PackageName: options.PackageName,
-		Repository:  options.Repository,
-	}
-	return spell
-}
-
 // spellFromDownloadOptions returns a new cran spell from *rcran.DownloadOptions.
 func (*cranModule) spellFromDownloadOptions(
 	options *rcran.DownloadOptions,
