@@ -115,6 +115,10 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	dependenciesNames := strings.Split(outClean, "\n")
 	if len(dependenciesNames) > 0 {
 		for _, dep := range dependenciesNames {
+			if dep == "" {
+				continue
+			}
+
 			depSpell, err := m.bareRunSingle(cranSpell{
 				PackageName:  dep,
 				Repository:   c.Repository,
