@@ -94,23 +94,57 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
+	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor)
+	// Retrieve dependencies
+	cmd := ""
 	if c.BioConductor {
-		return m.installFromBioconductor(c, bin)
+		cmd, err = rcran.GetBioconductorDepenencies(&rcran.InstallOptions{
+			PackageName: c.PackageName,
+			Repository:  c.Repository,
+			DryRun:      true,
+		})
 	} else {
-		return m.bareRunFromCran(c, bin)
+		cmd, err = rcran.GetDependencies(&rcran.InstallOptions{
+			PackageName: c.PackageName,
+			Repository:  c.Repository,
+			DryRun:      true,
+		})
 	}
+	if err != nil {
+		return nil, err
+	}
+	script, err := rscript.New(bin).Evaluate(cmd).Seal()
+	if err != nil {
+		return nil, err
+	}
+	out, err := script.Output()
+	outString := string(out)
+	if err != nil {
+		return nil, err
+	}
+	outClean := strings.Trim(outString, "\n")
+	dependenciesNames := strings.Split(outClean, "\n")
+	if len(dependenciesNames) > 0 {
+		for _, dep := range dependenciesNames {
+			depSpell, err := m.bareRunSingle(cranSpell{
+				PackageName:  dep,
+				Repository:   c.Repository,
+				BioConductor: false,
+			}, bin, c.BioConductor)
+			if err != nil {
+				return nil, err
+			}
+			finalSpell.Dependencies = append(finalSpell.Dependencies,
+				*depSpell)
+		}
+	}
+	return finalSpell, nil
 }
 
-func (m *cranModule) installFromBioconductor(
-	_ cranSpell,
-	_ string,
-) (*cranSpell, error) {
-	panic("not implemented")
-}
-
-func (m *cranModule) bareRunFromCranSingle(
+func (m *cranModule) bareRunSingle(
 	c cranSpell,
 	bin string,
+	BioConductor bool,
 ) (*cranSpell, error) {
 	tempdir := os.TempDir()
 	downloadOptions := &rcran.DownloadOptions{
@@ -118,7 +152,13 @@ func (m *cranModule) bareRunFromCranSingle(
 		DestinationDirectory: tempdir,
 		Repository:           c.Repository,
 	}
-	cmd, err := rcran.Download(downloadOptions)
+	cmd := ""
+	var err error = nil
+	if BioConductor {
+		cmd, err = rcran.DownloadBioconductor(downloadOptions)
+	} else {
+		cmd, err = rcran.Download(downloadOptions)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -141,48 +181,6 @@ func (m *cranModule) bareRunFromCranSingle(
 	}
 
 	finalSpell.PackagePath = path
-	return finalSpell, nil
-}
-
-func (m *cranModule) bareRunFromCran(
-	c cranSpell,
-	bin string,
-) (*cranSpell, error) {
-	finalSpell, err := m.bareRunFromCranSingle(c, bin)
-	// Retrieve dependencies
-	cmd, err := rcran.GetDependencies(&rcran.InstallOptions{
-		PackageName: c.PackageName,
-		Repository:  c.Repository,
-		DryRun:      true,
-	})
-	if err != nil {
-		return nil, err
-	}
-	script, err := rscript.New(bin).Evaluate(cmd).Seal()
-	if err != nil {
-		return nil, err
-	}
-	out, err := script.Output()
-	if err != nil {
-		return nil, err
-	}
-	outClean := strings.Trim(string(out), "\n")
-	dependenciesNames := strings.Split(outClean, "\n")
-	if len(dependenciesNames) > 0 {
-		dependenciesNames = dependenciesNames[:len(dependenciesNames)-1]
-		for _, dep := range dependenciesNames {
-			depSpell, err := m.bareRunFromCranSingle(cranSpell{
-				PackageName:  dep,
-				Repository:   c.Repository,
-				BioConductor: false,
-			}, bin)
-			if err != nil {
-				return nil, err
-			}
-			finalSpell.Dependencies = append(finalSpell.Dependencies,
-				*depSpell)
-		}
-	}
 	return finalSpell, nil
 }
 
