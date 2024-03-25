@@ -123,8 +123,10 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 			if err != nil {
 				return nil, err
 			}
-			finalSpell.Dependencies = append(finalSpell.Dependencies,
-				*depSpell)
+			if !Contains(finalSpell.Dependencies, *depSpell) {
+				finalSpell.Dependencies = append(finalSpell.Dependencies,
+					*depSpell)
+			}
 		}
 	}
 	return finalSpell, nil
@@ -141,8 +143,8 @@ func (m *cranModule) bareRunSingle(
 		DestinationDirectory: tempdir,
 		Repository:           c.Repository,
 	}
-	cmd := ""
-	var err error = nil
+	var cmd string
+	var err error
 	if BioConductor {
 		cmd, err = rcran.DownloadBioconductor(downloadOptions)
 	} else {
@@ -165,10 +167,6 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
-	if path == "" {
-		return nil, fmt.Errorf("Error downloading package.")
-	}
-
 	finalSpell.PackagePath = path
 	return finalSpell, nil
 }
@@ -186,6 +184,9 @@ func (m *cranModule) installBioconductor(cfg *Config) error {
 		return err
 	}
 	err = m.Commit(cfg, spell)
+	if err == ErrAlreadyPresent {
+		return nil
+	}
 	return err
 }
 
