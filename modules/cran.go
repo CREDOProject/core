@@ -127,10 +127,6 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 			if dep == "" {
 				continue
 			}
-<<<<<<< HEAD
-
-=======
->>>>>>> cran
 			depSpell, err := m.bareRunSingle(cranSpell{
 				PackageName:  dep,
 				Repository:   c.Repository,
