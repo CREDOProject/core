@@ -115,7 +115,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := script.Output()
+	out, err := script.CombinedOutput()
 	outString := string(out)
 	if err != nil {
 		return nil, err
@@ -170,10 +170,10 @@ func (m *cranModule) bareRunSingle(
 		return nil, err
 	}
 	out, err := script.CombinedOutput()
+	logger.Get().Print(string(out))
 	if err != nil {
 		return nil, err
 	}
-	logger.Get().Print(string(out))
 	finalSpell := m.spellFromDownloadOptions(downloadOptions)
 	finalSpell.BioConductor = bioconductor
 	path, err := rcran.ParsePath(string(out))
