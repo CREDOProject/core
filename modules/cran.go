@@ -58,8 +58,17 @@ func (c cranSpell) equals(t equatable) bool {
 	if !ok {
 		return false
 	}
-	return strings.Compare(s.PackageName, c.PackageName) == 0 &&
-		strings.Compare(s.PackagePath, c.PackagePath) == 0
+	equality := len(s.Dependencies) == len(c.Dependencies)
+	if !equality {
+		return false
+	}
+	for i := range s.Dependencies {
+		equality = equality &&
+			s.Dependencies[i].equals(c.Dependencies[i])
+	}
+	return equality && strings.Compare(s.PackageName, c.PackageName) == 0 &&
+		strings.Compare(s.PackagePath, c.PackagePath) == 0 &&
+		s.BioConductor == c.BioConductor
 }
 
 // BulkRun implements Module.
@@ -118,7 +127,10 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 			if dep == "" {
 				continue
 			}
+<<<<<<< HEAD
 
+=======
+>>>>>>> cran
 			depSpell, err := m.bareRunSingle(cranSpell{
 				PackageName:  dep,
 				Repository:   c.Repository,
@@ -139,7 +151,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 func (m *cranModule) bareRunSingle(
 	c cranSpell,
 	bin string,
-	BioConductor bool,
+	bioconductor bool,
 ) (*cranSpell, error) {
 	tempdir := os.TempDir()
 	downloadOptions := &rcran.DownloadOptions{
@@ -149,7 +161,7 @@ func (m *cranModule) bareRunSingle(
 	}
 	var cmd string
 	var err error
-	if BioConductor {
+	if bioconductor {
 		cmd, err = rcran.DownloadBioconductor(downloadOptions)
 	} else {
 		cmd, err = rcran.Download(downloadOptions)
@@ -167,6 +179,7 @@ func (m *cranModule) bareRunSingle(
 	}
 	logger.Get().Print(string(out))
 	finalSpell := m.spellFromDownloadOptions(downloadOptions)
+	finalSpell.BioConductor = bioconductor
 	path, err := rcran.ParsePath(string(out))
 	if err != nil {
 		return nil, err
@@ -285,7 +298,12 @@ func (c *cranModule) Run(anyspell any) error {
 		DestinationDirectory: destinationDirectory,
 		Repository:           spell.Repository,
 	}
-	cmd, err := rcran.Download(downloadOptions)
+	var cmd string
+	if spell.BioConductor {
+		cmd, err = rcran.DownloadBioconductor(downloadOptions)
+	} else {
+		cmd, err = rcran.Download(downloadOptions)
+	}
 	if err != nil {
 		return err
 	}
