@@ -162,6 +162,7 @@ func (m *cranModule) bareRunSingle(
 	} else {
 		cmd, err = rcran.Download(downloadOptions)
 	}
+	logger.Get().Print(err)
 	if err != nil {
 		return nil, err
 	}
@@ -264,6 +265,9 @@ func (c *cranModule) Commit(config *Config, result any) error {
 	if !ok {
 		return fmt.Errorf("Error Converting") //TODO: unify errors.
 	}
+	// if newEntry == nil {
+	// 	return nil
+	// }
 	if Contains(config.Cran, *newEntry) {
 		return ErrAlreadyPresent
 	}
