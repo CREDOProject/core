@@ -169,6 +169,7 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
+	// TODO: Check around here.
 	out, err := script.CombinedOutput()
 	logger.Get().Print(string(out))
 	if err != nil {
