@@ -6,6 +6,13 @@
       "name": "Launch Pip",
       "program": ".",
       "args": ["pip", "numpy"]
+    },
+    {
+      "type": "delve",
+      "request": "launch",
+      "name": "Launch Cran",
+      "program": ".",
+      "args": ["cran", "abind"]
     }
   ]
 }
