@@ -133,7 +133,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 				BioConductor: false,
 			}, bin, c.BioConductor)
 			if err != nil {
-				return nil, err
+				continue
 			}
 			if !Contains(finalSpell.Dependencies, *depSpell) {
 				finalSpell.Dependencies = append(finalSpell.Dependencies,
@@ -237,7 +237,6 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 		}, cfg)
 		if err != nil {
 			logger.Get().Print(err)
-			return
 		}
 		err = c.Commit(cfg, spell)
 		if err != nil {
@@ -266,9 +265,9 @@ func (c *cranModule) Commit(config *Config, result any) error {
 	if !ok {
 		return fmt.Errorf("Error Converting") //TODO: unify errors.
 	}
-	// if newEntry == nil {
-	// 	return nil
-	// }
+	if newEntry == nil {
+		return nil
+	}
 	if Contains(config.Cran, *newEntry) {
 		return ErrAlreadyPresent
 	}
