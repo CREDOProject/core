@@ -115,7 +115,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := script.CombinedOutput()
+	out, err := script.Output()
 	outString := string(out)
 	if err != nil {
 		return nil, err
@@ -167,6 +167,7 @@ func (m *cranModule) bareRunSingle(
 		return nil, err
 	}
 	script, err := rscript.New(bin).Evaluate(cmd).Seal()
+	logger.Get().Print(err)
 	if err != nil {
 		return nil, err
 	}
