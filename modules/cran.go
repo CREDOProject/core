@@ -162,12 +162,10 @@ func (m *cranModule) bareRunSingle(
 	} else {
 		cmd, err = rcran.Download(downloadOptions)
 	}
-	logger.Get().Print(err)
 	if err != nil {
 		return nil, err
 	}
 	script, err := rscript.New(bin).Evaluate(cmd).Seal()
-	logger.Get().Print(err)
 	if err != nil {
 		return nil, err
 	}
@@ -237,6 +235,7 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 		}, cfg)
 		if err != nil {
 			logger.Get().Print(err)
+			return
 		}
 		err = c.Commit(cfg, spell)
 		if err != nil {
