@@ -33,7 +33,8 @@ func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
 type pipModule struct{}
 
 type pipSpell struct {
-	Name string `yaml:"name"`
+	Name                 string `yaml:"name"`
+	ExternalDependencies Config `yaml:"external_dependencies,omitempty"`
 }
 
 // Function used to check if two pipSpell objects are equal.

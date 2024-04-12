@@ -30,9 +30,10 @@ func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
 type aptModule struct{}
 
 type aptSpell struct {
-	Name         string     `yaml:"name"`
-	Optional     bool       `yaml:"optional,omitempty"`
-	Depencencies []aptSpell `yaml:"dependencies,omitempty"`
+	Name                 string     `yaml:"name"`
+	Optional             bool       `yaml:"optional,omitempty"`
+	Depencencies         []aptSpell `yaml:"dependencies,omitempty"`
+	ExternalDependencies Config     `yaml:"external_dependencies,omitempty"`
 }
 
 // Function used to check if two aptSpell objects are equal.

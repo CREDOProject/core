@@ -33,8 +33,9 @@ func init() { Register(condaModuleName, func() Module { return &condaModule{} })
 type condaModule struct{}
 
 type condaSpell struct {
-	Name    string `yaml:"name"`
-	Channel string `yaml:"channel,omitempty"`
+	Name                 string `yaml:"name"`
+	Channel              string `yaml:"channel,omitempty"`
+	ExternalDependencies Config `yaml:"external_dependencies,omitempty"`
 }
 
 // Function used to check if two condaSpell objects are equal.

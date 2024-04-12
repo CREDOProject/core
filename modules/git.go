@@ -107,8 +107,9 @@ func (m *gitModule) BulkRun(config *Config) error {
 
 // Struct containing a Spell Entry for a Git repo.
 type gitSpell struct {
-	URL     string `yaml:"url"`
-	Version string `yaml:"version"`
+	URL                  string `yaml:"url"`
+	Version              string `yaml:"version"`
+	ExternalDependencies Config `yaml:"external_dependencies,omitempty"`
 }
 
 // Function used to check if two aptSpell objects are equal.
