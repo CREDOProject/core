@@ -280,6 +280,12 @@ func (c *cranModule) Run(anyspell any) error {
 	if !ok {
 		return fmt.Errorf("Error converting")
 	}
+	for _, dep := range spell.Dependencies {
+		err := c.Run(dep)
+		if err != nil {
+			return err
+		}
+	}
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
