@@ -55,7 +55,10 @@ func (s pipSpell) equals(t equatable) bool {
 
 // Commit implements Module.
 func (m *pipModule) Commit(config *Config, result any) error {
-	newEntry := result.(pipSpell)
+	newEntry, ok := result.(pipSpell)
+	if !ok {
+		return ErrConverting
+	}
 	if Contains(config.Pip, newEntry) {
 		return ErrAlreadyPresent
 	}

@@ -263,7 +263,7 @@ func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 func (c *cranModule) Commit(config *Config, result any) error {
 	newEntry, ok := result.(*cranSpell)
 	if !ok {
-		return fmt.Errorf("Error Converting") //TODO: unify errors.
+		return ErrConverting
 	}
 	if newEntry == nil {
 		return nil
@@ -279,7 +279,7 @@ func (c *cranModule) Commit(config *Config, result any) error {
 func (c *cranModule) Run(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
-		return fmt.Errorf("Error converting")
+		return ErrConverting
 	}
 	for _, dep := range spell.Dependencies {
 		err := c.Run(dep)

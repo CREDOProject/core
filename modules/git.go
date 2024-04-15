@@ -34,7 +34,10 @@ func init() { Register(gitModuleName, func() Module { return &gitModule{} }) }
 type gitModule struct{}
 
 func (m *gitModule) Commit(config *Config, result any) error {
-	newEntry := result.(gitSpell)
+	newEntry, ok := result.(gitSpell)
+	if !ok {
+		return ErrConverting
+	}
 	if Contains(config.Git, newEntry) {
 		return ErrAlreadyPresent
 	}
@@ -72,7 +75,10 @@ func (m *gitModule) bareRun(p gitSpell) (gitSpell, error) {
 }
 
 func (m *gitModule) Run(anySpell any) error {
-	spell := anySpell.(gitSpell)
+	spell, ok := anySpell.(gitSpell)
+	if !ok {
+		return ErrConverting
+	}
 
 	// Obtain the project path
 	projectPath, err := project.ProjectPath()

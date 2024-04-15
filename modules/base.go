@@ -11,6 +11,10 @@ var (
 	// ErrAlreadyPresent SHOULD be used by a Module to attest that it's
 	// configuration in the context of a `spell` is already present.
 	ErrAlreadyPresent = errors.New("Entry already present.")
+
+	// ErrConverting SHOULD be used by a Module to communicate an error in
+	// converting a Spell.
+	ErrConverting = errors.New("Error converting spell.")
 )
 
 // equatable is an interface that provides a method to check equality between

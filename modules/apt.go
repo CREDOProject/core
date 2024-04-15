@@ -154,7 +154,10 @@ func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
 
 // Commit implements Module.
 func (*aptModule) Commit(config *Config, result any) error {
-	newEntry := result.(aptSpell)
+	newEntry, ok := result.(aptSpell)
+	if !ok {
+		return ErrConverting
+	}
 	if Contains(config.Apt, newEntry) {
 		return ErrAlreadyPresent
 	}
@@ -166,7 +169,7 @@ func (*aptModule) Commit(config *Config, result any) error {
 func (*aptModule) Run(anySpell any) error {
 	spell, ok := anySpell.(aptSpell)
 	if !ok {
-		return fmt.Errorf("Error converting to aptSpell")
+		return ErrConverting
 	}
 	project, err := project.ProjectPath()
 	if err != nil {

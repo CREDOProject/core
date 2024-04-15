@@ -3,7 +3,6 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -118,7 +117,10 @@ func (c *condaModule) CliConfig(config *Config) *cobra.Command {
 
 // Commit implements Module.
 func (c *condaModule) Commit(config *Config, result any) error {
-	newEntry := result.(condaSpell)
+	newEntry, ok := result.(condaSpell)
+	if !ok {
+		return ErrConverting
+	}
 	if Contains(config.Conda, newEntry) {
 		return ErrAlreadyPresent
 	}
@@ -160,7 +162,7 @@ func (c *condaModule) Run(anySpell any) error {
 
 	spell, ok := anySpell.(condaSpell)
 	if !ok {
-		return errors.New("Error converting.")
+		return ErrConverting
 	}
 
 	downloadPath := path.Join(*project, condaModuleName)
