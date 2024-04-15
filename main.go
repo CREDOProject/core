@@ -3,18 +3,16 @@ package main
 import (
 	"credo/cmd"
 	"credo/config"
+	"credo/logger"
 	"credo/modules"
-
-	"fmt"
-	"os"
 )
 
 func main() {
+	logger := logger.Get()
 	configProvider := config.FileProvider{}
 	config, err := configProvider.Get()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(err)
 	}
 	for _, module := range modules.Modules {
 		if moduleConfig := module().CliConfig(config); moduleConfig != nil {
@@ -22,11 +20,9 @@ func main() {
 		}
 	}
 	if err := cmd.RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(err)
 	}
 	if err := configProvider.Write(config); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(err)
 	}
 }
