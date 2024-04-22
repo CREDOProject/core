@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	rcran "github.com/CREDOProject/go-rcran"
+	rdepends "github.com/CREDOProject/go-rdepends"
 	rscript "github.com/CREDOProject/go-rscript"
 	"github.com/spf13/cobra"
 )
@@ -170,19 +171,28 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Check around here.
 	out, err := script.CombinedOutput()
-	logger.Get().Print(string(out))
+	outputString := string(out)
+	logger.Get().Print(outputString)
 	if err != nil {
 		return nil, err
 	}
 	finalSpell := m.spellFromDownloadOptions(downloadOptions)
 	finalSpell.BioConductor = bioconductor
-	path, err := rcran.ParsePath(string(out))
+	path, err := rcran.ParsePath(outputString)
 	if err != nil {
 		return nil, err
 	}
 	finalSpell.PackagePath = path
+	pkgPath, err := rcran.GetPath(outputString)
+	if err != nil {
+		return nil, err
+	}
+	additionalDependencies, err := rdepends.DependsOn(pkgPath)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Print(additionalDependencies)
 	return finalSpell, nil
 }
 
