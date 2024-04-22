@@ -10,6 +10,7 @@ import (
 
 	rcran "github.com/CREDOProject/go-rcran"
 	rdepends "github.com/CREDOProject/go-rdepends"
+	"github.com/CREDOProject/go-rdepends/providers"
 	rscript "github.com/CREDOProject/go-rscript"
 	"github.com/spf13/cobra"
 )
@@ -194,6 +195,10 @@ func (m *cranModule) bareRunSingle(
 	}
 	fmt.Print(additionalDependencies)
 	return finalSpell, nil
+}
+
+func _onlySuggestions(d providers.Dependency) bool {
+	return d.Suggestion
 }
 
 // installBioconductor runs the command in an opinionated fashion to install
