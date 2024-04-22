@@ -12,6 +12,7 @@ import (
 	rdepends "github.com/CREDOProject/go-rdepends"
 	"github.com/CREDOProject/go-rdepends/providers"
 	rscript "github.com/CREDOProject/go-rscript"
+	"github.com/CREDOProject/sharedutils/filter"
 	"github.com/spf13/cobra"
 )
 
@@ -95,7 +96,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor)
+	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor, cfg)
 	// Retrieve dependencies
 	cmd := ""
 	if c.BioConductor {
@@ -134,7 +135,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 				PackageName:  dep,
 				Repository:   c.Repository,
 				BioConductor: false,
-			}, bin, c.BioConductor)
+			}, bin, c.BioConductor, cfg)
 			if err != nil {
 				continue
 			}
@@ -151,6 +152,7 @@ func (m *cranModule) bareRunSingle(
 	c cranSpell,
 	bin string,
 	bioconductor bool,
+	cfg *Config,
 ) (*cranSpell, error) {
 	tempdir := os.TempDir()
 	downloadOptions := &rcran.DownloadOptions{
@@ -193,8 +195,26 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
-	fmt.Print(additionalDependencies)
+	suggest(additionalDependencies)
+	for _, d := range additionalDependencies {
+		module, ok := Modules[d.PackageManager]
+		if ok {
+			args := []string{d.Name}
+			module().CliConfig(&finalSpell.ExternalDependencies).Run(nil, args)
+		}
+	}
 	return finalSpell, nil
+}
+
+func suggest(d []providers.Dependency) {
+	suggestions := filter.Filter(d, _onlySuggestions)
+	if len(suggestions) > 0 {
+		fmt.Printf("There are %d suggested system requirement(s)\n",
+			len(suggestions))
+		for _, s := range suggestions {
+			fmt.Printf("\t - %s\n", s.Name)
+		}
+	}
 }
 
 func _onlySuggestions(d providers.Dependency) bool {
