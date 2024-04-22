@@ -1,6 +1,6 @@
 module credo
 
-go 1.22.1
+go 1.22.2
 
 require (
 	github.com/CREDOProject/go-pip v0.0.1
@@ -8,7 +8,9 @@ require (
 )
 
 require (
-	github.com/CREDOProject/sharedutils v0.0.4 // indirect
+	github.com/CREDOProject/go-anticonf-parser v0.0.2 // indirect
+	github.com/CREDOProject/go-rdepends v0.0.1 // indirect
+	github.com/CREDOProject/sharedutils v0.1.0 // indirect
 	github.com/aquasecurity/go-pep440-version v0.0.0-20210121094942-22b2f8951d46 // indirect
 	github.com/aquasecurity/go-version v0.0.0-20210121072130-637058cfe492 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -17,6 +19,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
+	pault.ag/go/debian v0.16.0 // indirect
+	pault.ag/go/topsort v0.1.1 // indirect
 )
 
 require (
