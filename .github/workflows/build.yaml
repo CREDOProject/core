@@ -1,7 +1,6 @@
 name:
 on:
-  push:
-    branches: [main]
+  push: [tags]
 jobs:
   build:
     strategy:
