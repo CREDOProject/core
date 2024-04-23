@@ -4,16 +4,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const applyModuleName = "apply"
+const saveModuleName = "save"
 
 // Registers the applyModule.
-func init() { Register(applyModuleName, func() Module { return &applyModule{} }) }
+func init() { Register(saveModuleName, func() Module { return &saveModule{} }) }
 
-// applyModule is used to apply the credospell configuration in the current
+// saveModule is used to apply the credospell configuration in the current
 // working directory.
-type applyModule struct{}
+type saveModule struct{}
 
-func (m *applyModule) bulkRun(c *Config) error {
+func (m *saveModule) bulkRun(c *Config) error {
 	// Iterates ovet the modules to call the bulkRun function of each Module.
 	for k := range Modules {
 		module := Modules[k]() // Returns the module.
@@ -26,10 +26,10 @@ func (m *applyModule) bulkRun(c *Config) error {
 }
 
 // CliConfig implements Module.
-func (m *applyModule) CliConfig(conifig *Config) *cobra.Command {
+func (m *saveModule) CliConfig(conifig *Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   applyModuleName,
-		Short: "Applies the credospell.yaml configuration in the current directory.",
+		Use:   saveModuleName,
+		Short: "Runs the credospell.yaml configuration in the current directory and saves every dependency.",
 		Run: func(cmd *cobra.Command, args []string) {
 			m.bulkRun(conifig)
 		},
@@ -38,10 +38,10 @@ func (m *applyModule) CliConfig(conifig *Config) *cobra.Command {
 }
 
 // This is a stub method. It should always return nil.
-func (m *applyModule) Commit(config *Config, result any) error { return nil }
+func (m *saveModule) Commit(config *Config, result any) error { return nil }
 
 // This is a stub method. It should always return nil.
-func (m *applyModule) Run(anySpell any) error { return nil }
+func (m *saveModule) Run(anySpell any) error { return nil }
 
 // This is a stub method. It should always return nil.
-func (m *applyModule) BulkRun(config *Config) error { return nil }
+func (m *saveModule) BulkRun(config *Config) error { return nil }

@@ -64,3 +64,12 @@ func Register(moduleName string, module ModuleFactory) {
 	}
 	Modules[moduleName] = module
 }
+
+// Registers modules to a subcommand.
+func RegisterModulesCli(cmd *cobra.Command, config *Config) {
+	for _, module := range Modules {
+		if cfg := module().CliConfig(config); cfg != nil && cmd != cfg {
+			cmd.AddCommand(cfg)
+		}
+	}
+}
