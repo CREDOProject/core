@@ -3,6 +3,7 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
+	"credo/suggest"
 	"fmt"
 	"os"
 	"path"
@@ -195,7 +196,14 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
-	suggest(additionalDependencies)
+	suggestions := filter.Filter(additionalDependencies, _onlySuggestions)
+	for _, s := range suggestions {
+		suggest.Register(suggest.Suggestion{
+			Module:    cranModuleName,
+			From:      finalSpell.PackageName,
+			Suggested: s.Name,
+		})
+	}
 	for _, d := range additionalDependencies {
 		module, ok := Modules[d.PackageManager]
 		if ok {
@@ -204,17 +212,6 @@ func (m *cranModule) bareRunSingle(
 		}
 	}
 	return finalSpell, nil
-}
-
-func suggest(d []providers.Dependency) {
-	suggestions := filter.Filter(d, _onlySuggestions)
-	if len(suggestions) > 0 {
-		fmt.Printf("There are %d suggested system requirement(s)\n",
-			len(suggestions))
-		for _, s := range suggestions {
-			fmt.Printf("\t - %s\n", s.Name)
-		}
-	}
 }
 
 func _onlySuggestions(d providers.Dependency) bool {
