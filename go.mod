@@ -27,6 +27,7 @@ require (
 	github.com/CREDOProject/go-apt-client v0.4.0
 	github.com/CREDOProject/go-conda v0.1.1
 	github.com/CREDOProject/go-isgiturl v1.0.0
+	github.com/CREDOProject/go-osinfo v0.0.1
 	github.com/CREDOProject/go-pythonvenv v0.1.2
 	github.com/CREDOProject/go-rcran v0.6.3
 	github.com/CREDOProject/go-rscript v0.0.1

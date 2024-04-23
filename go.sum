@@ -9,6 +9,8 @@ github.com/CREDOProject/go-conda v0.1.1 h1:oniGCr6lZKr3kxXQjxeofewVuDIfl/a+Oi4P5
 github.com/CREDOProject/go-conda v0.1.1/go.mod h1:d2YeiK6GMTTa+ve8rD6wRVc9O7kxxqpEHJ37L6RlCuI=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
 github.com/CREDOProject/go-isgiturl v1.0.0/go.mod h1:piuq92nTv3rEpyouSYNf7YMOafHQFaoK/pvFWMIUAG8=
+github.com/CREDOProject/go-osinfo v0.0.1 h1:D+wUmSwueGGURJpEkD2ab79EnYYfB4TRw/Jtuyp6ELI=
+github.com/CREDOProject/go-osinfo v0.0.1/go.mod h1:iY7wsiIncIlkLB5gGMfU3iJY3hUObZ+XL6TDTJgXUj0=
 github.com/CREDOProject/go-pip v0.0.1 h1:yj2Ft7ZQ7PtsyHQSPRE18VyitekAjHq5PZHsAmJFXsY=
 github.com/CREDOProject/go-pip v0.0.1/go.mod h1:UcqpJPB6mbbFxpEm9Fdvk3AM4tl2FVrgvwog0cCmpXw=
 github.com/CREDOProject/go-pythonvenv v0.1.2 h1:69HushZb4OwAw3j7S6WoYTragKRB+fuzmyWpmWzYjmU=
