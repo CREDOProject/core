@@ -1,0 +1,28 @@
+name:
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    strategy:
+      matrix:
+        architecture:
+          - amd64
+          - arm64
+        platform:
+          - darwin
+          - linux
+          - windows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install go
+        run: |
+          curl -OL https://go.dev/dl/go1.22.1.linux-amd64.tar.gz
+          rm -rf /usr/local/go 
+          sudo tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
+      - name: Test
+        run: |
+          GOOS=${{ matrix.architecture }} GOARCH=${{ matrix.platform }} make test
+      - name: Build
+        run: GOOS=${{ matrix.architecture }} GOARCH=${{ matrix.platform }} make
