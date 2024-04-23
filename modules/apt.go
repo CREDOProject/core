@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/CREDOProject/go-apt-client"
+	goosinfo "github.com/CREDOProject/go-osinfo"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +25,20 @@ Install a apt package:
 var isAptOptional = regexp.MustCompile(`\<(?P<name>..*)\>`)
 
 // Registers the aptModule.
-func init() { Register(aptModuleName, func() Module { return &aptModule{} }) }
+func init() {
+	osinfo, err := goosinfo.Retrieve()
+	if err != nil {
+		logger.Get().Fatal(err)
+	}
+	supportedDistributions := map[string]struct{}{
+		"ubuntu": {},
+		"debian": {},
+	}
+	if _, ok := supportedDistributions[osinfo.Distribution]; !ok {
+		return
+	}
+	Register(aptModuleName, func() Module { return &aptModule{} })
+}
 
 // aptModule is used to manage the apt scope in the credospell configuration.
 type aptModule struct{}

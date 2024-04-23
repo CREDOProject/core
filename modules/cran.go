@@ -3,13 +3,17 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
+	"credo/suggest"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 
 	rcran "github.com/CREDOProject/go-rcran"
+	rdepends "github.com/CREDOProject/go-rdepends"
+	"github.com/CREDOProject/go-rdepends/providers"
 	rscript "github.com/CREDOProject/go-rscript"
+	"github.com/CREDOProject/sharedutils/filter"
 	"github.com/spf13/cobra"
 )
 
@@ -93,7 +97,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor)
+	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor, cfg)
 	// Retrieve dependencies
 	cmd := ""
 	if c.BioConductor {
@@ -132,7 +136,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 				PackageName:  dep,
 				Repository:   c.Repository,
 				BioConductor: false,
-			}, bin, c.BioConductor)
+			}, bin, c.BioConductor, cfg)
 			if err != nil {
 				continue
 			}
@@ -149,6 +153,7 @@ func (m *cranModule) bareRunSingle(
 	c cranSpell,
 	bin string,
 	bioconductor bool,
+	cfg *Config,
 ) (*cranSpell, error) {
 	tempdir := os.TempDir()
 	downloadOptions := &rcran.DownloadOptions{
@@ -170,20 +175,47 @@ func (m *cranModule) bareRunSingle(
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Check around here.
 	out, err := script.CombinedOutput()
-	logger.Get().Print(string(out))
+	outputString := string(out)
+	logger.Get().Print(outputString)
 	if err != nil {
 		return nil, err
 	}
 	finalSpell := m.spellFromDownloadOptions(downloadOptions)
 	finalSpell.BioConductor = bioconductor
-	path, err := rcran.ParsePath(string(out))
+	path, err := rcran.ParsePath(outputString)
 	if err != nil {
 		return nil, err
 	}
 	finalSpell.PackagePath = path
+	pkgPath, err := rcran.GetPath(outputString)
+	if err != nil {
+		return nil, err
+	}
+	additionalDependencies, err := rdepends.DependsOn(pkgPath)
+	if err != nil {
+		return nil, err
+	}
+	suggestions := filter.Filter(additionalDependencies, _onlySuggestions)
+	for _, s := range suggestions {
+		suggest.Register(suggest.Suggestion{
+			Module:    cranModuleName,
+			From:      finalSpell.PackageName,
+			Suggested: s.Name,
+		})
+	}
+	for _, d := range additionalDependencies {
+		module, ok := Modules[d.PackageManager]
+		if ok {
+			args := []string{d.Name}
+			module().CliConfig(&finalSpell.ExternalDependencies).Run(nil, args)
+		}
+	}
 	return finalSpell, nil
+}
+
+func _onlySuggestions(d providers.Dependency) bool {
+	return d.Suggestion
 }
 
 // installBioconductor runs the command in an opinionated fashion to install

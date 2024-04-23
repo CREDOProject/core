@@ -5,6 +5,8 @@ import (
 	"credo/config"
 	"credo/logger"
 	"credo/modules"
+	"credo/suggest"
+	"fmt"
 )
 
 func main() {
@@ -25,4 +27,7 @@ func main() {
 	if err := configProvider.Write(config); err != nil {
 		logger.Fatal(err)
 	}
+	// Print suggestions.
+	fmt.Printf("Package suggestions:\n")
+	fmt.Print(suggest.Get().String())
 }
