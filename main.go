@@ -16,11 +16,7 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	for _, module := range modules.Modules {
-		if moduleConfig := module().CliConfig(config); moduleConfig != nil {
-			cmd.RootCmd.AddCommand(moduleConfig)
-		}
-	}
+	modules.RegisterModulesCli(cmd.RootCmd, config)
 	if err := cmd.RootCmd.Execute(); err != nil {
 		logger.Fatal(err)
 	}
