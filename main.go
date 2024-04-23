@@ -28,6 +28,8 @@ func main() {
 		logger.Fatal(err)
 	}
 	// Print suggestions.
-	fmt.Printf("Package suggestions:\n")
-	fmt.Print(suggest.Get().String())
+	if suggest.HasSuggestion() {
+		fmt.Printf("Package suggestions:\n")
+		fmt.Print(suggest.Get().String())
+	}
 }

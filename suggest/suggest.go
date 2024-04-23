@@ -33,3 +33,5 @@ func (suggestions Suggestions) String() (output string) {
 	}
 	return
 }
+
+func HasSuggestion() bool { return len(suggestions) > 0 }
