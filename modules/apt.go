@@ -3,6 +3,7 @@ package modules
 import (
 	"credo/logger"
 	"credo/project"
+	"credo/suggest"
 	"fmt"
 	"os"
 	"path"
@@ -157,6 +158,11 @@ func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
 		nameIndex := isAptOptional.SubexpIndex("name")
 		if nameIndex != -1 && isOptional {
 			cleanDependency = matches[nameIndex]
+			suggest.Register(suggest.Suggestion{
+				Module:    aptModuleName,
+				From:      aptPack.Name,
+				Suggested: cleanDependency,
+			})
 		}
 		spell.Depencencies = append(spell.Depencencies, aptSpell{
 			Name:     cleanDependency,
