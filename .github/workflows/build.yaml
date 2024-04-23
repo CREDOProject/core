@@ -27,3 +27,11 @@ jobs:
       - name: Build
         run: |
           GOOS=${{ matrix.platform }} GOARCH=${{ matrix.architecture }} make
+      - uses: vimtor/action-zip@v1.2
+        with:
+          files: credo
+          dest: ${{ matrix.platform }}_${{ matrix.architecture }}_${{ github.head_ref }}_${{ github.sha }}_credo.zip
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            *_credo.zip
