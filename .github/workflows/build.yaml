@@ -23,6 +23,7 @@ jobs:
           sudo tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
       - name: Test
         run: |
-          GOOS=${{ matrix.architecture }} GOARCH=${{ matrix.platform }} make test
+          GOOS=${{ matrix.platform }} GOARCH=${{ matrix.architecture }} make test
       - name: Build
-        run: GOOS=${{ matrix.architecture }} GOARCH=${{ matrix.platform }} make
+        run: |
+          GOOS=${{ matrix.platform }} GOARCH=${{ matrix.architecture }} make
