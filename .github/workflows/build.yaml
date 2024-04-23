@@ -1,7 +1,8 @@
-name:
+name: Build
 on:
   push:
     branches: [main]
+  release:
 jobs:
   build:
     strategy:
@@ -32,6 +33,7 @@ jobs:
           files: credo
           dest: ${{ matrix.platform }}_${{ matrix.architecture }}_${{ github.head_ref }}_${{ github.sha }}_credo.zip
       - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             *_credo.zip
