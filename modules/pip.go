@@ -33,13 +33,38 @@ func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
 type pipModule struct{}
 
 // Apply implements Module.
-func (m *pipModule) Apply(any) error {
-	panic("unimplemented")
+func (m *pipModule) Apply(anySpell any) error {
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	pipBinary, err := getPipBinary()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, pipModuleName)
+	cmd, err := gopip.New(*pipBinary).
+		Install(anySpell.(pipSpell).Name).
+		FindLinks(downloadPath).
+		Seal()
+	err = cmd.Run(&gopip.RunOptions{
+		Output: os.Stdout,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // BulkApply implements Module.
 func (m *pipModule) BulkApply(config *Config) error {
-	panic("unimplemented")
+	for _, ps := range config.Pip {
+		err := m.Apply(ps)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type pipSpell struct {
