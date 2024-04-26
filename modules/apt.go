@@ -44,6 +44,16 @@ func init() {
 // aptModule is used to manage the apt scope in the credospell configuration.
 type aptModule struct{}
 
+// Apply implements Module.
+func (m *aptModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (m *aptModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 type aptSpell struct {
 	Name                 string     `yaml:"name"`
 	Optional             bool       `yaml:"optional,omitempty"`

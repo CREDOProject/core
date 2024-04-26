@@ -13,6 +13,16 @@ func init() { Register(saveModuleName, func() Module { return &saveModule{} }) }
 // working directory.
 type saveModule struct{}
 
+// Apply implements Module.
+func (m *saveModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (m *saveModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 func (m *saveModule) bulkRun(c *Config) error {
 	// Iterates ovet the modules to call the bulkRun function of each Module.
 	for k := range Modules {

@@ -31,6 +31,16 @@ func init() { Register(condaModuleName, func() Module { return &condaModule{} })
 // condaModule is used to manage the conda scope in the credospell configuration.
 type condaModule struct{}
 
+// Apply implements Module.
+func (c *condaModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (c *condaModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 type condaSpell struct {
 	Name                 string `yaml:"name"`
 	Channel              string `yaml:"channel,omitempty"`

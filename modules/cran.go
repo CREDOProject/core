@@ -36,6 +36,16 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 // cranModule is used to manage the CARN scope in the credospell configuration.
 type cranModule struct{}
 
+// Apply implements Module.
+func (c *cranModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (c *cranModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 type cranSpell struct {
 	PackageName          string      `yaml:"package_name,omitempty"`
 	PackagePath          string      `yaml:"package_path,omitempty"`

@@ -33,6 +33,16 @@ func init() { Register(gitModuleName, func() Module { return &gitModule{} }) }
 // gitModule is used to manage the git scope in the credospell configuration.
 type gitModule struct{}
 
+// Apply implements Module.
+func (m *gitModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (m *gitModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 func (m *gitModule) Commit(config *Config, result any) error {
 	newEntry, ok := result.(gitSpell)
 	if !ok {

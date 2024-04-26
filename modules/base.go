@@ -55,6 +55,15 @@ type Module interface {
 	// sub-entry of a module.
 	BulkSave(config *Config) error
 
+	// Apply is used to execute a Module making changes to the system
+	// (i.e.: install packages).
+	Apply(any) error
+
+	// BulkApply is used to execute the config entry of each
+	// sub-entry of a module and make changes to the system (i.e.: install
+	// packages).
+	BulkApply(config *Config) error
+
 	// Returns a cobra.Command to use in the command line.
 	CliConfig(config *Config) *cobra.Command
 }

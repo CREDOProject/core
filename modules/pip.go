@@ -32,6 +32,16 @@ func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
 // pipModule is used to manage the pip scope in the credospell configuration.
 type pipModule struct{}
 
+// Apply implements Module.
+func (m *pipModule) Apply(any) error {
+	panic("unimplemented")
+}
+
+// BulkApply implements Module.
+func (m *pipModule) BulkApply(config *Config) error {
+	panic("unimplemented")
+}
+
 type pipSpell struct {
 	Name                 string `yaml:"name"`
 	ExternalDependencies Config `yaml:"external_dependencies,omitempty"`
