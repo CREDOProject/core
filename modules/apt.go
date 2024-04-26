@@ -75,16 +75,16 @@ func (a aptSpell) equals(t equatable) bool {
 	return false
 }
 
-// BulkRun implements Module.
-func (m *aptModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (m *aptModule) BulkSave(config *Config) error {
 	for _, as := range config.Apt {
 		for _, dep := range as.Depencencies {
-			err := m.Run(dep)
+			err := m.Save(dep)
 			if err != nil {
 				return err
 			}
 		}
-		err := m.Run(as)
+		err := m.Save(as)
 		if err != nil {
 			return err
 		}
@@ -185,8 +185,8 @@ func (*aptModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-// Run implements Module.
-func (*aptModule) Run(anySpell any) error {
+// Save implements Module.
+func (*aptModule) Save(anySpell any) error {
 	spell, ok := anySpell.(aptSpell)
 	if !ok {
 		return ErrConverting

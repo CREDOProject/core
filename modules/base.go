@@ -47,11 +47,13 @@ type Module interface {
 	// Commit adds a configuration entry for a said module.
 	Commit(config *Config, result any) error
 
-	// Run is used to execute a Module making changes to the filesystem.
-	Run(any) error
+	// Save is used to execute a Module making changes to the filesystem by
+	// downloading packages.
+	Save(any) error
 
-	// BulkRun is used to run the config entry ofa each sub-entry of a module.
-	BulkRun(config *Config) error
+	// BulkSave is used to execute the config entry of each
+	// sub-entry of a module.
+	BulkSave(config *Config) error
 
 	// Returns a cobra.Command to use in the command line.
 	CliConfig(config *Config) *cobra.Command

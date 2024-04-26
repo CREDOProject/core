@@ -74,7 +74,7 @@ func (m *gitModule) bareRun(p gitSpell) (gitSpell, error) {
 	return spell, nil
 }
 
-func (m *gitModule) Run(anySpell any) error {
+func (m *gitModule) Save(anySpell any) error {
 	spell, ok := anySpell.(gitSpell)
 	if !ok {
 		return ErrConverting
@@ -101,9 +101,9 @@ func (m *gitModule) Run(anySpell any) error {
 	return nil
 }
 
-func (m *gitModule) BulkRun(config *Config) error {
+func (m *gitModule) BulkSave(config *Config) error {
 	for _, gs := range config.Git {
-		err := m.Run(gs)
+		err := m.Save(gs)
 		if err != nil {
 			return err
 		}

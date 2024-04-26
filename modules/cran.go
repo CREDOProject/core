@@ -76,10 +76,10 @@ func (c cranSpell) equals(t equatable) bool {
 		s.BioConductor == c.BioConductor
 }
 
-// BulkRun implements Module.
-func (c *cranModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (c *cranModule) BulkSave(config *Config) error {
 	for _, cs := range config.Cran {
-		if err := c.Run(cs); err != nil {
+		if err := c.Save(cs); err != nil {
 			return err
 		}
 	}
@@ -307,14 +307,14 @@ func (c *cranModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-// Run implements Module.
-func (c *cranModule) Run(anyspell any) error {
+// Save implements Module.
+func (c *cranModule) Save(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
 		return ErrConverting
 	}
 	for _, dep := range spell.Dependencies {
-		err := c.Run(dep)
+		err := c.Save(dep)
 		if err != nil {
 			return err
 		}

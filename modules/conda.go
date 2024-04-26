@@ -56,10 +56,10 @@ func (c condaSpell) equals(t equatable) bool {
 	return false
 }
 
-// BulkRun implements Module.
-func (c *condaModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (c *condaModule) BulkSave(config *Config) error {
 	for _, cs := range config.Conda {
-		if err := c.Run(cs); err != nil {
+		if err := c.Save(cs); err != nil {
 			return err
 		}
 	}
@@ -149,8 +149,8 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 	return p, nil
 }
 
-// Run implements Module.
-func (c *condaModule) Run(anySpell any) error {
+// Save implements Module.
+func (c *condaModule) Save(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err

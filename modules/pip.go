@@ -114,8 +114,8 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	return p, nil
 }
 
-// Run implements Module.
-func (m *pipModule) Run(anySpell any) error {
+// Save implements Module.
+func (m *pipModule) Save(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -137,10 +137,10 @@ func (m *pipModule) Run(anySpell any) error {
 	return nil
 }
 
-// BulkRun implements Module.
-func (m *pipModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (m *pipModule) BulkSave(config *Config) error {
 	for _, ps := range config.Pip {
-		err := m.Run(ps)
+		err := m.Save(ps)
 		if err != nil {
 			return err
 		}

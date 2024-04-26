@@ -17,7 +17,7 @@ func (m *saveModule) bulkRun(c *Config) error {
 	// Iterates ovet the modules to call the bulkRun function of each Module.
 	for k := range Modules {
 		module := Modules[k]() // Returns the module.
-		err := module.BulkRun(c)
+		err := module.BulkSave(c)
 		if err != nil {
 			return err
 		}
@@ -41,7 +41,7 @@ func (m *saveModule) CliConfig(conifig *Config) *cobra.Command {
 func (m *saveModule) Commit(config *Config, result any) error { return nil }
 
 // This is a stub method. It should always return nil.
-func (m *saveModule) Run(anySpell any) error { return nil }
+func (m *saveModule) Save(anySpell any) error { return nil }
 
 // This is a stub method. It should always return nil.
-func (m *saveModule) BulkRun(config *Config) error { return nil }
+func (m *saveModule) BulkSave(config *Config) error { return nil }
