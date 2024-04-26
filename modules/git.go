@@ -35,12 +35,12 @@ type gitModule struct{}
 
 // Apply implements Module.
 func (m *gitModule) Apply(any) error {
-	panic("unimplemented")
+	return nil
 }
 
 // BulkApply implements Module.
 func (m *gitModule) BulkApply(config *Config) error {
-	panic("unimplemented")
+	return nil
 }
 
 func (m *gitModule) Commit(config *Config, result any) error {
