@@ -13,15 +13,11 @@ func init() { Register(saveModuleName, func() Module { return &saveModule{} }) }
 // working directory.
 type saveModule struct{}
 
-// Apply implements Module.
-func (m *saveModule) Apply(any) error {
-	panic("unimplemented")
-}
+// This is a stub method. It should always return nil.
+func (m *saveModule) Apply(any) error { return nil }
 
-// BulkApply implements Module.
-func (m *saveModule) BulkApply(config *Config) error {
-	panic("unimplemented")
-}
+// This is a stub method. It should always return nil.
+func (m *saveModule) BulkApply(config *Config) error { return nil }
 
 func (m *saveModule) bulkRun(c *Config) error {
 	// Iterates ovet the modules to call the bulkRun function of each Module.
