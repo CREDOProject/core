@@ -1,12 +1,34 @@
 package modules
 
-import "github.com/spf13/cobra"
+import (
+	"credo/logger"
+
+	"github.com/spf13/cobra"
+)
 
 const applyModuleName = "apply"
 
 func init() { Register(applyModuleName, func() Module { return applyModule{} }) }
 
 type applyModule struct{}
+
+// CliConfig implements Module.
+func (a applyModule) CliConfig(config *Config) *cobra.Command {
+	return &cobra.Command{
+		Use:   applyModuleName,
+		Short: "Applies the credospell.yaml configuration in the current directory and installs all the dependencies.",
+		Run: func(cmd *cobra.Command, args []string) {
+			for k := range Modules {
+				module := Modules[k]()
+				err := module.BulkApply(config)
+				if err != nil {
+					logger.Get().Fatal(err)
+				}
+			}
+		},
+		Args: cobra.NoArgs,
+	}
+}
 
 // This is a stub method. It should always return nil.
 func (a applyModule) Apply(any) error {
@@ -21,17 +43,6 @@ func (a applyModule) BulkApply(config *Config) error {
 // This is a stub method. It should always return nil.
 func (a applyModule) BulkSave(config *Config) error {
 	return nil
-}
-
-// CliConfig implements Module.
-func (a applyModule) CliConfig(config *Config) *cobra.Command {
-	return &cobra.Command{
-		Use:   applyModuleName,
-		Short: "Runs the credospell.yaml configuration in the current directory and installs all the dependencies.",
-		Run: func(cmd *cobra.Command, args []string) {
-		},
-		Args: cobra.NoArgs,
-	}
 }
 
 // This is a stub method. It should always return nil.
