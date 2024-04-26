@@ -44,16 +44,6 @@ func init() {
 // aptModule is used to manage the apt scope in the credospell configuration.
 type aptModule struct{}
 
-// Apply implements Module.
-func (m *aptModule) Apply(any) error {
-	panic("unimplemented")
-}
-
-// BulkApply implements Module.
-func (m *aptModule) BulkApply(config *Config) error {
-	panic("unimplemented")
-}
-
 type aptSpell struct {
 	Name                 string     `yaml:"name"`
 	Optional             bool       `yaml:"optional,omitempty"`
@@ -89,6 +79,9 @@ func (a aptSpell) equals(t equatable) bool {
 func (m *aptModule) BulkSave(config *Config) error {
 	for _, as := range config.Apt {
 		for _, dep := range as.Depencencies {
+			if dep.Optional {
+				continue
+			}
 			err := m.Save(dep)
 			if err != nil {
 				return err
@@ -213,4 +206,43 @@ func (*aptModule) Save(anySpell any) error {
 	out, err := apt.Download(aptPack, downloadPath)
 	logger.Get().Print(string(out))
 	return err
+}
+
+// Apply implements Module.
+func (m *aptModule) Apply(anySpell any) error {
+	spell, ok := anySpell.(aptSpell)
+	if !ok {
+		return ErrConverting
+	}
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, aptModuleName)
+	aptPack := &apt.Package{
+		Name: spell.Name,
+	}
+	out, err := apt.Install(downloadPath, aptPack)
+	logger.Get().Print(string(out))
+	return err
+}
+
+// BulkApply implements Module.
+func (m *aptModule) BulkApply(config *Config) error {
+	for _, as := range config.Apt {
+		for _, dep := range as.Depencencies {
+			if dep.Optional {
+				continue
+			}
+			err := m.Apply(dep)
+			if err != nil {
+				return err
+			}
+		}
+		err := m.Apply(as)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
