@@ -84,3 +84,25 @@ func RegisterModulesCli(cmd *cobra.Command, config *Config) {
 		}
 	}
 }
+
+// DeepSave all sub-dependency of a spell.
+func DeepSave(config *Config) error {
+	for _, module := range Modules {
+		err := module().BulkSave(config)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// DeepApply all sub-dependency of a spell.
+func DeepApply(config *Config) error {
+	for _, module := range Modules {
+		err := module().BulkApply(config)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
