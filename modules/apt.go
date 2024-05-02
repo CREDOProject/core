@@ -75,16 +75,19 @@ func (a aptSpell) equals(t equatable) bool {
 	return false
 }
 
-// BulkRun implements Module.
-func (m *aptModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (m *aptModule) BulkSave(config *Config) error {
 	for _, as := range config.Apt {
 		for _, dep := range as.Depencencies {
-			err := m.Run(dep)
+			if dep.Optional {
+				continue
+			}
+			err := m.Save(dep)
 			if err != nil {
 				return err
 			}
 		}
-		err := m.Run(as)
+		err := m.Save(as)
 		if err != nil {
 			return err
 		}
@@ -185,8 +188,8 @@ func (*aptModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-// Run implements Module.
-func (*aptModule) Run(anySpell any) error {
+// Save implements Module.
+func (*aptModule) Save(anySpell any) error {
 	spell, ok := anySpell.(aptSpell)
 	if !ok {
 		return ErrConverting
@@ -203,4 +206,43 @@ func (*aptModule) Run(anySpell any) error {
 	out, err := apt.Download(aptPack, downloadPath)
 	logger.Get().Print(string(out))
 	return err
+}
+
+// Apply implements Module.
+func (m *aptModule) Apply(anySpell any) error {
+	spell, ok := anySpell.(aptSpell)
+	if !ok {
+		return ErrConverting
+	}
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, aptModuleName)
+	aptPack := &apt.Package{
+		Name: spell.Name,
+	}
+	out, err := apt.Install(downloadPath, aptPack)
+	logger.Get().Print(string(out))
+	return err
+}
+
+// BulkApply implements Module.
+func (m *aptModule) BulkApply(config *Config) error {
+	for _, as := range config.Apt {
+		for _, dep := range as.Depencencies {
+			if dep.Optional {
+				continue
+			}
+			err := m.Apply(dep)
+			if err != nil {
+				return err
+			}
+		}
+		err := m.Apply(as)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -47,11 +47,22 @@ type Module interface {
 	// Commit adds a configuration entry for a said module.
 	Commit(config *Config, result any) error
 
-	// Run is used to execute a Module making changes to the filesystem.
-	Run(any) error
+	// Save is used to execute a Module making changes to the filesystem by
+	// downloading packages.
+	Save(any) error
 
-	// BulkRun is used to run the config entry ofa each sub-entry of a module.
-	BulkRun(config *Config) error
+	// BulkSave is used to execute the config entry of each
+	// sub-entry of a module.
+	BulkSave(config *Config) error
+
+	// Apply is used to execute a Module making changes to the system
+	// (i.e.: install packages).
+	Apply(any) error
+
+	// BulkApply is used to execute the config entry of each
+	// sub-entry of a module and make changes to the system (i.e.: install
+	// packages).
+	BulkApply(config *Config) error
 
 	// Returns a cobra.Command to use in the command line.
 	CliConfig(config *Config) *cobra.Command
@@ -72,4 +83,26 @@ func RegisterModulesCli(cmd *cobra.Command, config *Config) {
 			cmd.AddCommand(cfg)
 		}
 	}
+}
+
+// DeepSave all sub-dependency of a spell.
+func DeepSave(config *Config) error {
+	for _, module := range Modules {
+		err := module().BulkSave(config)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// DeepApply all sub-dependency of a spell.
+func DeepApply(config *Config) error {
+	for _, module := range Modules {
+		err := module().BulkApply(config)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

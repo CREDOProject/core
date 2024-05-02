@@ -32,6 +32,41 @@ func init() { Register(pipModuleName, func() Module { return &pipModule{} }) }
 // pipModule is used to manage the pip scope in the credospell configuration.
 type pipModule struct{}
 
+// Apply implements Module.
+func (m *pipModule) Apply(anySpell any) error {
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	pipBinary, err := getPipBinary()
+	if err != nil {
+		return err
+	}
+	downloadPath := path.Join(*project, pipModuleName)
+	cmd, err := gopip.New(*pipBinary).
+		Install(anySpell.(pipSpell).Name).
+		FindLinks(downloadPath).
+		Seal()
+	err = cmd.Run(&gopip.RunOptions{
+		Output: os.Stdout,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// BulkApply implements Module.
+func (m *pipModule) BulkApply(config *Config) error {
+	for _, ps := range config.Pip {
+		err := m.Apply(ps)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type pipSpell struct {
 	Name                 string `yaml:"name"`
 	ExternalDependencies Config `yaml:"external_dependencies,omitempty"`
@@ -114,8 +149,8 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	return p, nil
 }
 
-// Run implements Module.
-func (m *pipModule) Run(anySpell any) error {
+// Save implements Module.
+func (m *pipModule) Save(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -137,10 +172,10 @@ func (m *pipModule) Run(anySpell any) error {
 	return nil
 }
 
-// BulkRun implements Module.
-func (m *pipModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (m *pipModule) BulkSave(config *Config) error {
 	for _, ps := range config.Pip {
-		err := m.Run(ps)
+		err := m.Save(ps)
 		if err != nil {
 			return err
 		}

@@ -31,6 +31,16 @@ func init() { Register(condaModuleName, func() Module { return &condaModule{} })
 // condaModule is used to manage the conda scope in the credospell configuration.
 type condaModule struct{}
 
+// Apply implements Module.
+func (c *condaModule) Apply(any) error {
+	return nil
+}
+
+// BulkApply implements Module.
+func (c *condaModule) BulkApply(config *Config) error {
+	return nil
+}
+
 type condaSpell struct {
 	Name                 string `yaml:"name"`
 	Channel              string `yaml:"channel,omitempty"`
@@ -56,10 +66,10 @@ func (c condaSpell) equals(t equatable) bool {
 	return false
 }
 
-// BulkRun implements Module.
-func (c *condaModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (c *condaModule) BulkSave(config *Config) error {
 	for _, cs := range config.Conda {
-		if err := c.Run(cs); err != nil {
+		if err := c.Save(cs); err != nil {
 			return err
 		}
 	}
@@ -149,8 +159,8 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 	return p, nil
 }
 
-// Run implements Module.
-func (c *condaModule) Run(anySpell any) error {
+// Save implements Module.
+func (c *condaModule) Save(anySpell any) error {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err

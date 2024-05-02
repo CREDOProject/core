@@ -36,6 +36,66 @@ func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 // cranModule is used to manage the CARN scope in the credospell configuration.
 type cranModule struct{}
 
+// Apply implements Module.
+func (c *cranModule) Apply(anyspell any) error {
+	spell, ok := anyspell.(cranSpell)
+	if !ok {
+		return ErrConverting
+	}
+	err := DeepApply(&spell.ExternalDependencies)
+	if err != nil {
+		return err
+	}
+	for _, dep := range spell.Dependencies {
+		err := c.Apply(dep)
+		if err != nil {
+			return err
+		}
+	}
+	project, err := project.ProjectPath()
+	if err != nil {
+		return err
+	}
+	bin, err := rscript.DetectRscriptBinary()
+	if err != nil {
+		return err
+	}
+	destinationDirectory := path.Join(*project, cranModuleName)
+	err = os.MkdirAll(destinationDirectory, 0755)
+	if err != nil {
+		return err
+	}
+	libraryDirectory := path.Join(*project, "R-library")
+	err = os.MkdirAll(libraryDirectory, 0755)
+	if err != nil {
+		return err
+	}
+	installOptions := &rcran.InstallOptions{
+		PackageName: path.Join(destinationDirectory, spell.PackagePath),
+		Repository:  "NULL",
+		Lib:         libraryDirectory,
+	}
+	cmd, err := rcran.InstallLocal(installOptions)
+	if err != nil {
+		return err
+	}
+	script, err := rscript.New(bin).Evaluate(cmd).Seal()
+	script.Stdout = os.Stdout
+	script.Stderr = os.Stderr
+	err = script.Run()
+	return err
+}
+
+// BulkApply implements Module.
+func (c *cranModule) BulkApply(config *Config) error {
+	for _, cs := range config.Cran {
+		if err := c.Apply(cs); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type cranSpell struct {
 	PackageName          string      `yaml:"package_name,omitempty"`
 	PackagePath          string      `yaml:"package_path,omitempty"`
@@ -76,10 +136,10 @@ func (c cranSpell) equals(t equatable) bool {
 		s.BioConductor == c.BioConductor
 }
 
-// BulkRun implements Module.
-func (c *cranModule) BulkRun(config *Config) error {
+// BulkSave implements Module.
+func (c *cranModule) BulkSave(config *Config) error {
 	for _, cs := range config.Cran {
-		if err := c.Run(cs); err != nil {
+		if err := c.Save(cs); err != nil {
 			return err
 		}
 	}
@@ -97,7 +157,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor, cfg)
+	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor)
 	// Retrieve dependencies
 	cmd := ""
 	if c.BioConductor {
@@ -136,7 +196,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 				PackageName:  dep,
 				Repository:   c.Repository,
 				BioConductor: false,
-			}, bin, c.BioConductor, cfg)
+			}, bin, c.BioConductor)
 			if err != nil {
 				continue
 			}
@@ -153,7 +213,6 @@ func (m *cranModule) bareRunSingle(
 	c cranSpell,
 	bin string,
 	bioconductor bool,
-	cfg *Config,
 ) (*cranSpell, error) {
 	tempdir := os.TempDir()
 	downloadOptions := &rcran.DownloadOptions{
@@ -307,14 +366,14 @@ func (c *cranModule) Commit(config *Config, result any) error {
 	return nil
 }
 
-// Run implements Module.
-func (c *cranModule) Run(anyspell any) error {
+// Save implements Module.
+func (c *cranModule) Save(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
 		return ErrConverting
 	}
 	for _, dep := range spell.Dependencies {
-		err := c.Run(dep)
+		err := c.Save(dep)
 		if err != nil {
 			return err
 		}
@@ -345,6 +404,10 @@ func (c *cranModule) Run(anyspell any) error {
 	}
 	if err != nil {
 		return err
+	}
+	err = DeepSave(&spell.ExternalDependencies)
+	if err != nil {
+		return nil
 	}
 	script, err := rscript.New(bin).Evaluate(cmd).Seal()
 	script.Stdout = os.Stdout
