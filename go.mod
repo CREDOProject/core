@@ -3,7 +3,7 @@ module credo
 go 1.22.2
 
 require (
-	github.com/CREDOProject/go-pip v0.1.0
+	github.com/CREDOProject/go-pip v0.1.1
 	github.com/CREDOProject/go-rdepends v0.1.1
 	github.com/CREDOProject/sharedutils v0.1.2
 	github.com/go-git/go-git/v5 v5.12.0
