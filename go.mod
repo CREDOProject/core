@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/CREDOProject/go-pip v0.1.0
-	github.com/CREDOProject/go-rdepends v0.0.2
+	github.com/CREDOProject/go-rdepends v0.1.1
 	github.com/CREDOProject/sharedutils v0.1.2
 	github.com/go-git/go-git/v5 v5.12.0
 )
@@ -29,7 +29,7 @@ require (
 	github.com/CREDOProject/go-isgiturl v1.0.0
 	github.com/CREDOProject/go-osinfo v0.0.1
 	github.com/CREDOProject/go-pythonvenv v0.1.2
-	github.com/CREDOProject/go-rcran v0.6.3
+	github.com/CREDOProject/go-rcran v0.6.4
 	github.com/CREDOProject/go-rscript v0.0.1
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
