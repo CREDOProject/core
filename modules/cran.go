@@ -157,7 +157,7 @@ func (m *cranModule) bareRun(c cranSpell, cfg *Config) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor, cfg)
+	finalSpell, err := m.bareRunSingle(c, bin, c.BioConductor)
 	// Retrieve dependencies
 	cmd := ""
 	if c.BioConductor {

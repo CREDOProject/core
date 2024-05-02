@@ -33,12 +33,12 @@ type condaModule struct{}
 
 // Apply implements Module.
 func (c *condaModule) Apply(any) error {
-	panic("unimplemented")
+	return nil
 }
 
 // BulkApply implements Module.
 func (c *condaModule) BulkApply(config *Config) error {
-	panic("unimplemented")
+	return nil
 }
 
 type condaSpell struct {
