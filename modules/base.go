@@ -27,6 +27,9 @@ type equatable interface {
 
 // Returns true if s contains e, returns false otherwise.
 func Contains[T equatable](s []T, e T) bool {
+	if s == nil || len(s) == 0 {
+		return false
+	}
 	for _, v := range s {
 		if v.equals(e) {
 			return true
