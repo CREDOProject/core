@@ -135,7 +135,7 @@ func (m *aptModule) cobraRun(config *Config) func(*cobra.Command, []string) {
 			logger.Get().Fatal(err)
 		}
 		err = m.Commit(config, spell)
-		if err != nil {
+		if err != nil && err != ErrAlreadyPresent {
 			logger.Get().Fatal(err)
 		}
 	}
