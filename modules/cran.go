@@ -1,10 +1,12 @@
 package modules
 
 import (
+	"bytes"
 	"credo/logger"
 	"credo/project"
 	"credo/suggest"
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -40,12 +42,12 @@ type cranSpell struct {
 }
 
 // Registers the cranModule.
-func init() { Register(cranModuleName, func() Module { return &cranModule2{} }) }
+func init() { Register(cranModuleName, func() Module { return &cranModule{} }) }
 
-type cranModule2 struct{}
+type cranModule struct{}
 
 // Apply implements Module.
-func (c *cranModule2) Apply(anyspell any) error {
+func (c *cranModule) Apply(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
 		return ErrConverting
@@ -89,7 +91,7 @@ func (c *cranModule2) Apply(anyspell any) error {
 }
 
 // BulkApply implements Module.
-func (c *cranModule2) BulkApply(config *Config) error {
+func (c *cranModule) BulkApply(config *Config) error {
 	for _, cs := range config.Cran {
 		if err := c.Apply(cs); err != nil {
 			return err
@@ -99,7 +101,7 @@ func (c *cranModule2) BulkApply(config *Config) error {
 }
 
 // BulkSave implements Module.
-func (c *cranModule2) BulkSave(config *Config) error {
+func (c *cranModule) BulkSave(config *Config) error {
 	for _, cs := range config.Cran {
 		if err := c.Save(cs); err != nil {
 			return err
@@ -109,7 +111,7 @@ func (c *cranModule2) BulkSave(config *Config) error {
 }
 
 // CliConfig implements Module.
-func (c *cranModule2) CliConfig(config *Config) *cobra.Command {
+func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 	command := &cobra.Command{
 		Args:    c.cobraArgs(),
 		Example: cranModuleExample,
@@ -123,7 +125,7 @@ func (c *cranModule2) CliConfig(config *Config) *cobra.Command {
 }
 
 // Commit implements Module.
-func (c *cranModule2) Commit(config *Config, result any) error {
+func (c *cranModule) Commit(config *Config, result any) error {
 	newEntry, ok := result.(*cranSpell)
 	if !ok {
 		return ErrConverting
@@ -139,7 +141,7 @@ func (c *cranModule2) Commit(config *Config, result any) error {
 }
 
 // Save implements Module.
-func (c *cranModule2) Save(anyspell any) error {
+func (c *cranModule) Save(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
 		return ErrConverting
@@ -177,7 +179,7 @@ func (c *cranModule2) Save(anyspell any) error {
 	return err
 }
 
-func (c *cranModule2) destinationDirectory() (string, error) {
+func (c *cranModule) destinationDirectory() (string, error) {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return "", err
@@ -190,7 +192,7 @@ func (c *cranModule2) destinationDirectory() (string, error) {
 	return directory, nil
 }
 
-func (c *cranModule2) libraryDirectory() (string, error) {
+func (c *cranModule) libraryDirectory() (string, error) {
 	project, err := project.ProjectPath()
 	if err != nil {
 		return "", err
@@ -206,7 +208,7 @@ func (c *cranModule2) libraryDirectory() (string, error) {
 // cobraArgs is used to validate the arguments passed to the cran command.
 //
 // This function is intended to be used by cobra.
-func (c *cranModule2) cobraArgs() func(*cobra.Command, []string) error {
+func (c *cranModule) cobraArgs() func(*cobra.Command, []string) error {
 	return func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return fmt.Errorf("%s module requires at least one argument.",
@@ -220,7 +222,7 @@ func (c *cranModule2) cobraArgs() func(*cobra.Command, []string) error {
 // It serves as an entry point to the cranModule.
 //
 // This function is inteded to be used by cobra.
-func (c *cranModule2) cobraRun(cfg *Config) func(*cobra.Command, []string) {
+func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
 		isBioconductor := strings.Compare(
 			cmd.CalledAs(),
@@ -243,7 +245,7 @@ func (c *cranModule2) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 	}
 }
 
-func (c *cranModule2) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
+func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 	if s.BioConductor {
 		err := c.installBioConductor(cfg)
 		if err != nil {
@@ -253,7 +255,7 @@ func (c *cranModule2) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 	return c.bareRunSingle(s)
 }
 
-func (c *cranModule2) bareRunSingle(s cranSpell) (*cranSpell, error) {
+func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	rscriptBin, err := gorscript.DetectRscriptBinary()
 	if err != nil {
 		return nil, err
@@ -273,12 +275,14 @@ func (c *cranModule2) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	if err != nil {
 		return nil, err
 	}
-	out, err := script.CombinedOutput()
-	outputString := string(out)
-	logger.Get().Print(outputString)
+	var buffer bytes.Buffer
+	script.Stdout = io.MultiWriter(os.Stdout, &buffer)
+	script.Stderr = os.Stderr
+	err = script.Run()
 	if err != nil {
 		return nil, err
 	}
+	outputString := buffer.String()
 	pkgPath, err := gorcran.GetPath(outputString)
 	if err != nil {
 		return nil, err
@@ -318,7 +322,7 @@ func (c *cranModule2) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	return &finalSpell, nil
 }
 
-func (c *cranModule2) getDependencies(rscriptBin string, s cranSpell) ([]cranSpell, error) {
+func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpell, error) {
 	dependencyFunction := c.dependencyFunction(s.BioConductor)
 	cmd, err := dependencyFunction(&gorcran.InstallOptions{
 		PackageName: s.PackageName,
@@ -332,12 +336,14 @@ func (c *cranModule2) getDependencies(rscriptBin string, s cranSpell) ([]cranSpe
 	if err != nil {
 		return nil, err
 	}
-	out, err := script.Output()
-	outputString := string(out)
-	logger.Get().Print(outputString)
+	var buffer bytes.Buffer
+	script.Stdout = &buffer
+	script.Stderr = os.Stderr
+	err = script.Run()
 	if err != nil {
 		return nil, err
 	}
+	outputString := buffer.String()
 	dependencyList := strings.Split(strings.Trim(outputString, "\n"), "\n")
 	deps := []cranSpell{}
 	for _, dep := range dependencyList {
@@ -349,17 +355,17 @@ func (c *cranModule2) getDependencies(rscriptBin string, s cranSpell) ([]cranSpe
 			Repository:   s.Repository,
 			BioConductor: s.BioConductor,
 		})
-		if !Contains(deps, *dependencySpell) {
-			deps = append(deps, *dependencySpell)
-		}
 		if err != nil {
 			continue
+		}
+		if !Contains(deps, *dependencySpell) {
+			deps = append(deps, *dependencySpell)
 		}
 	}
 	return deps, nil
 }
 
-func (c *cranModule2) dependencyFunction(bioconductor bool) func(
+func (c *cranModule) dependencyFunction(bioconductor bool) func(
 	o *gorcran.InstallOptions) (string, error) {
 	if bioconductor {
 		return gorcran.GetBioconductorDepenencies
@@ -367,7 +373,7 @@ func (c *cranModule2) dependencyFunction(bioconductor bool) func(
 	return gorcran.GetDependencies
 }
 
-func (c *cranModule2) downloadFunction(bioconductor bool) func(
+func (c *cranModule) downloadFunction(bioconductor bool) func(
 	o *gorcran.DownloadOptions) (string, error) {
 	if bioconductor {
 		return gorcran.DownloadBioconductor
@@ -375,7 +381,7 @@ func (c *cranModule2) downloadFunction(bioconductor bool) func(
 	return gorcran.Download
 }
 
-func (c *cranModule2) installBioConductor(cfg *Config) error {
+func (c *cranModule) installBioConductor(cfg *Config) error {
 	spell, err := c.bareRun(cranSpell{
 		PackageName:  "BiocManager",
 		BioConductor: false,
