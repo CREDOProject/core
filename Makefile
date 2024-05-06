@@ -1,3 +1,5 @@
+t="coverprofile.txt"
+
 default: build
 
 clean:
@@ -8,7 +10,7 @@ build: clean
 	go build -o credo 
 
 test:
-	go test ./...
+	go test ./... -cover
 
 coverage:
 	go test -coverprofile=$t ./... && go tool cover -html=$t && unlink $t
