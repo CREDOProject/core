@@ -2,6 +2,7 @@ package modules
 
 import (
 	"bytes"
+	"credo/cache"
 	"credo/logger"
 	"credo/project"
 	"credo/suggest"
@@ -256,6 +257,13 @@ func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 }
 
 func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
+	if spell := cache.Retrieve(cranModuleName,
+		s.PackageName); spell != nil {
+		newSpell, ok := spell.(cranSpell)
+		if ok {
+			fmt.Print(newSpell)
+		}
+	}
 	rscriptBin, err := gorscript.DetectRscriptBinary()
 	if err != nil {
 		return nil, err
@@ -319,6 +327,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 			module().CliConfig(&finalSpell.ExternalDependencies).Run(nil, args)
 		}
 	}
+	_ = cache.Insert(cranModuleName, s.PackageName, finalSpell)
 	return &finalSpell, nil
 }
 
@@ -355,7 +364,7 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 			Repository:   s.Repository,
 			BioConductor: s.BioConductor,
 		})
-		if err != nil {
+		if err != nil || dependencySpell == nil {
 			continue
 		}
 		if !Contains(deps, *dependencySpell) {
