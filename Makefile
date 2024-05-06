@@ -1,3 +1,5 @@
+t="coverprofile.txt"
+
 default: build
 
 clean:
