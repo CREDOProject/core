@@ -18,12 +18,9 @@ func (a applyModule) CliConfig(config *Config) *cobra.Command {
 		Use:   applyModuleName,
 		Short: "Applies the credospell.yaml configuration in the current directory and installs all the dependencies.",
 		Run: func(cmd *cobra.Command, args []string) {
-			for k := range Modules {
-				module := Modules[k]()
-				err := module.BulkApply(config)
-				if err != nil {
-					logger.Get().Fatal(err)
-				}
+			err := DeepApply(config)
+			if err != nil {
+				logger.Get().Fatal(err)
 			}
 		},
 		Args: cobra.NoArgs,
