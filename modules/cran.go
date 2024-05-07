@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 
 	gorcran "github.com/CREDOProject/go-rcran"
 	gordepends "github.com/CREDOProject/go-rdepends"
@@ -261,7 +262,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 		s.PackageName); spell != nil {
 		newSpell, ok := spell.(cranSpell)
 		if ok {
-			fmt.Print(newSpell)
+			return &newSpell, nil
 		}
 	}
 	rscriptBin, err := gorscript.DetectRscriptBinary()
@@ -355,22 +356,31 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 	outputString := buffer.String()
 	dependencyList := strings.Split(strings.Trim(outputString, "\n"), "\n")
 	deps := []cranSpell{}
+	var MaxWorkers chan int = make(chan int, 8)
+	var wg sync.WaitGroup
 	for _, dep := range dependencyList {
 		if dep == "" {
 			continue
 		}
-		dependencySpell, err := c.bareRunSingle(cranSpell{
-			PackageName:  dep,
-			Repository:   s.Repository,
-			BioConductor: s.BioConductor,
-		})
-		if err != nil || dependencySpell == nil {
-			continue
-		}
-		if !Contains(deps, *dependencySpell) {
-			deps = append(deps, *dependencySpell)
-		}
+		wg.Add(1)
+		MaxWorkers <- 1
+		go func() {
+			defer func() { wg.Done(); <-MaxWorkers }()
+			fmt.Printf("Worker %s starting\n", dep)
+			dependencySpell, err := c.bareRunSingle(cranSpell{
+				PackageName:  dep,
+				Repository:   s.Repository,
+				BioConductor: s.BioConductor,
+			})
+			if err != nil || dependencySpell == nil {
+				return
+			}
+			if !Contains(deps, *dependencySpell) {
+				deps = append(deps, *dependencySpell)
+			}
+		}()
 	}
+	wg.Wait()
 	return deps, nil
 }
 
