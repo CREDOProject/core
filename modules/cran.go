@@ -314,9 +314,13 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 			Suggested: suggestion.Name,
 		})
 	}
+	parsedPath, err := gorcran.ParsePath(outputString)
+	if err != nil {
+		return nil, err
+	}
 	finalSpell := cranSpell{
 		PackageName:  s.PackageName,
-		PackagePath:  pkgPath,
+		PackagePath:  parsedPath,
 		Repository:   s.Repository,
 		BioConductor: s.BioConductor,
 		Dependencies: deps,
