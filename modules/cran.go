@@ -368,7 +368,7 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 		}
 		wg.Add(1)
 		MaxWorkers <- 1
-		go func() {
+		go func(dep string) {
 			defer func() { wg.Done(); <-MaxWorkers }()
 			fmt.Printf("Worker %s starting\n", dep)
 			dependencySpell, err := c.bareRunSingle(cranSpell{
@@ -382,7 +382,7 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 			if !Contains(deps, *dependencySpell) {
 				deps = append(deps, *dependencySpell)
 			}
-		}()
+		}(dep)
 	}
 	wg.Wait()
 	return deps, nil
