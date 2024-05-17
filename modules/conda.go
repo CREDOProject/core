@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"credo/cache"
 	"credo/logger"
 	"credo/project"
 	"fmt"
@@ -139,6 +140,12 @@ func (c *condaModule) Commit(config *Config, result any) error {
 }
 
 func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
+	if spell := cache.Retrieve(condaModuleName, p.Name); spell != nil {
+		newSpell, ok := spell.(condaSpell)
+		if ok {
+			return newSpell, nil
+		}
+	}
 	condaBinary, err := condautils.DetectCondaBinary()
 	if err != nil {
 		return condaSpell{}, nil
@@ -156,6 +163,7 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 	if err != nil {
 		return condaSpell{}, err
 	}
+	_ = cache.Insert(condaModuleName, p.Name, p)
 	return p, nil
 }
 
