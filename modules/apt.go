@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"credo/cache"
 	"credo/logger"
 	"credo/project"
 	"credo/suggest"
@@ -141,9 +142,15 @@ func (m *aptModule) cobraRun(config *Config) func(*cobra.Command, []string) {
 	}
 }
 
-func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
+func (*aptModule) bareRun(s aptSpell) (aptSpell, error) {
+	if spell := cache.Retrieve(aptModuleName, s.Name); spell != nil {
+		newSpell, ok := spell.(aptSpell)
+		if ok {
+			return newSpell, nil
+		}
+	}
 	aptPack := &apt.Package{
-		Name: spell.Name,
+		Name: s.Name,
 	}
 	output, err := apt.InstallDry(aptPack)
 	logger.Get().Print(string(output))
@@ -167,12 +174,13 @@ func (*aptModule) bareRun(spell aptSpell) (aptSpell, error) {
 				Suggested: cleanDependency,
 			})
 		}
-		spell.Depencencies = append(spell.Depencencies, aptSpell{
+		s.Depencencies = append(s.Depencencies, aptSpell{
 			Name:     cleanDependency,
 			Optional: isOptional,
 		})
 	}
-	return spell, nil
+	_ = cache.Insert(pipModuleName, s.Name, s)
+	return s, nil
 }
 
 // Commit implements Module.
