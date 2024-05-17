@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"credo/cache"
 	"credo/logger"
 	"credo/project"
 	"fmt"
@@ -129,6 +130,12 @@ func getPipBinary() (*string, error) {
 }
 
 func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
+	if spell := cache.Retrieve(pipModuleName, p.Name); spell != nil {
+		newSpell, ok := spell.(pipSpell)
+		if ok {
+			return newSpell, nil
+		}
+	}
 	pipBinary, err := getPipBinary()
 	if err != nil {
 		return pipSpell{}, err
@@ -145,7 +152,7 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	if err != nil {
 		return pipSpell{}, err
 	}
-
+	_ = cache.Insert(pipModuleName, p.Name, p)
 	return p, nil
 }
 
