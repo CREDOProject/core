@@ -158,6 +158,9 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 
 // Save implements Module.
 func (m *pipModule) Save(anySpell any) error {
+	if cache.Retrieve(pipModuleName, anySpell.(pipSpell).Name) != nil {
+		return nil
+	}
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -176,6 +179,7 @@ func (m *pipModule) Save(anySpell any) error {
 	if err != nil {
 		return err
 	}
+	_ = cache.Insert(pipModuleName, anySpell.(pipSpell).Name, true)
 	return nil
 }
 
