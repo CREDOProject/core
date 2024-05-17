@@ -181,7 +181,7 @@ func (c *cranModule) Save(anyspell any) error {
 	script.Stdout = os.Stdout
 	script.Stderr = os.Stderr
 	err = script.Run()
-	if err != nil {
+	if err == nil {
 		_ = cache.Insert(cranModuleName, spell.PackageName, true)
 	}
 	return err
