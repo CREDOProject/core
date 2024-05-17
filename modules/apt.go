@@ -202,6 +202,9 @@ func (*aptModule) Save(anySpell any) error {
 	if !ok {
 		return ErrConverting
 	}
+	if cache.Retrieve(aptModuleName, spell.Name) != nil {
+		return nil
+	}
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -213,6 +216,9 @@ func (*aptModule) Save(anySpell any) error {
 	}
 	out, err := apt.Download(aptPack, downloadPath)
 	logger.Get().Print(string(out))
+	if err == nil {
+		_ = cache.Insert(aptModuleName, spell.Name, true)
+	}
 	return err
 }
 
