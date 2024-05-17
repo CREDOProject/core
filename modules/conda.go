@@ -169,6 +169,13 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 
 // Save implements Module.
 func (c *condaModule) Save(anySpell any) error {
+	spell, ok := anySpell.(condaSpell)
+	if !ok {
+		return ErrConverting
+	}
+	if cache.Retrieve(condaModuleName, spell.Name) != nil {
+		return nil
+	}
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -177,12 +184,6 @@ func (c *condaModule) Save(anySpell any) error {
 	if err != nil {
 		return err
 	}
-
-	spell, ok := anySpell.(condaSpell)
-	if !ok {
-		return ErrConverting
-	}
-
 	downloadPath := path.Join(*project, condaModuleName)
 	cmd, err := goconda.
 		New(condaBinary, downloadPath, downloadPath).
@@ -194,9 +195,8 @@ func (c *condaModule) Save(anySpell any) error {
 	err = cmd.Run(&goconda.RunOptions{
 		Output: os.Stdout,
 	})
-
-	if err != nil {
-		return err
+	if err == nil {
+		_ = cache.Insert(aptModuleName, spell.Name, true)
 	}
-	return nil
+	return err
 }
