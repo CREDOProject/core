@@ -148,6 +148,9 @@ func (c *cranModule) Save(anyspell any) error {
 	if !ok {
 		return ErrConverting
 	}
+	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
+		return nil
+	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
 			return err
@@ -178,6 +181,9 @@ func (c *cranModule) Save(anyspell any) error {
 	script.Stdout = os.Stdout
 	script.Stderr = os.Stderr
 	err = script.Run()
+	if err != nil {
+		_ = cache.Insert(cranModuleName, spell.PackageName, true)
+	}
 	return err
 }
 
