@@ -114,17 +114,17 @@ func getPipBinary() (*string, error) {
 	// Obtain the project path
 	projectPath, err := project.ProjectPath()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("getPipBinary, obtaining project path: %v", err)
 	}
 
 	venvPath, err := setupPythonVenv(path.Join(*projectPath, "venv"))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("getPipBinary, setting up venv: %v", err)
 	}
 
 	pipBinary, err := utils.PipBinaryFrom(path.Join(venvPath, "bin"))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("getPipBinary, binary from path: %v", err)
 	}
 	return &pipBinary, nil
 }
@@ -138,19 +138,19 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	}
 	pipBinary, err := getPipBinary()
 	if err != nil {
-		return pipSpell{}, err
+		return pipSpell{}, fmt.Errorf("bareRun, retriving pip binary: %v", err)
 	}
 
 	cmd, err := gopip.New(*pipBinary).Install(p.Name).DryRun().Seal()
 	if err != nil {
-		return pipSpell{}, err
+		return pipSpell{}, fmt.Errorf("bareRun, creating pip command: %v", err)
 	}
 
 	err = cmd.Run(&gopip.RunOptions{
 		Output: os.Stdout,
 	})
 	if err != nil {
-		return pipSpell{}, err
+		return pipSpell{}, fmt.Errorf("bareRun, running pip command: %v", err)
 	}
 	_ = cache.Insert(pipModuleName, p.Name, p)
 	return p, nil
