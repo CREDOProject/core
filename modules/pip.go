@@ -138,7 +138,7 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	}
 	pipBinary, err := getPipBinary()
 	if err != nil {
-		return pipSpell{}, fmt.Errorf("bareRun, retriving pip binary: %v", err)
+		return pipSpell{}, fmt.Errorf("bareRun, retrieving pip binary: %v", err)
 	}
 
 	cmd, err := gopip.New(*pipBinary).Install(p.Name).DryRun().Seal()
