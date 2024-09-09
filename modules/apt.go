@@ -17,7 +17,7 @@ import (
 
 const aptModuleName = "apt"
 
-const aptModuleShort = "Retrieves an apt package and its depenencies."
+const aptModuleShort = "Retrieves an apt package and its dependencies."
 
 const aptModuleExample = `
 Install a apt package:
@@ -48,7 +48,7 @@ type aptModule struct{}
 type aptSpell struct {
 	Name                 string     `yaml:"name"`
 	Optional             bool       `yaml:"optional,omitempty"`
-	Depencencies         []aptSpell `yaml:"dependencies,omitempty"`
+	Dependencies         []aptSpell `yaml:"dependencies,omitempty"`
 	ExternalDependencies Config     `yaml:"external_dependencies,omitempty"`
 }
 
@@ -58,18 +58,18 @@ type aptSpell struct {
 // The function first checks if the input parameter t is of type aptSpell.
 //
 // If it is, it proceeds to compare the Name and Optional of the two
-// objects and all its other Depencencies.
+// objects and all its other Dependencies.
 // The function returns true if the two objects are equal.
 // Otherwise, it returns false.
 func (a aptSpell) equals(t equatable) bool {
 	if o, ok := t.(aptSpell); ok {
-		equality := len(o.Depencencies) == len(a.Depencencies)
+		equality := len(o.Dependencies) == len(a.Dependencies)
 		if !equality {
 			return false
 		}
-		for i := range o.Depencencies {
+		for i := range o.Dependencies {
 			equality = equality &&
-				o.Depencencies[i].equals(a.Depencencies[i])
+				o.Dependencies[i].equals(a.Dependencies[i])
 		}
 		return equality
 	}
@@ -79,7 +79,7 @@ func (a aptSpell) equals(t equatable) bool {
 // BulkSave implements Module.
 func (m *aptModule) BulkSave(config *Config) error {
 	for _, as := range config.Apt {
-		for _, dep := range as.Depencencies {
+		for _, dep := range as.Dependencies {
 			if dep.Optional {
 				continue
 			}
@@ -174,7 +174,7 @@ func (*aptModule) bareRun(s aptSpell) (aptSpell, error) {
 				Suggested: cleanDependency,
 			})
 		}
-		s.Depencencies = append(s.Depencencies, aptSpell{
+		s.Dependencies = append(s.Dependencies, aptSpell{
 			Name:     cleanDependency,
 			Optional: isOptional,
 		})
@@ -244,7 +244,7 @@ func (m *aptModule) Apply(anySpell any) error {
 // BulkApply implements Module.
 func (m *aptModule) BulkApply(config *Config) error {
 	for _, as := range config.Apt {
-		for _, dep := range as.Depencencies {
+		for _, dep := range as.Dependencies {
 			if dep.Optional {
 				continue
 			}
