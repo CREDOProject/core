@@ -4,6 +4,13 @@ import "github.com/spf13/cobra"
 
 const dnfModuleName = "dnf"
 
+const dnfModuleShort = "Retrieves a dnf package and its dependencies"
+
+const dnfModuleExample = `
+Install a dnf package
+	credo dnf vim
+`
+
 func init() { Register(dnfModuleName, func() Module { return &dnfModule{} }) }
 
 // dnfModule is used to manage the dnf scope in the credospell configuration.
