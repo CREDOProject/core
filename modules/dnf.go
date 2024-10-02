@@ -4,6 +4,7 @@ import (
 	"credo/logger"
 	"fmt"
 
+	goosinfo "github.com/CREDOProject/go-osinfo"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +17,23 @@ Install a dnf package
 	credo dnf vim
 `
 
-func init() { Register(dnfModuleName, func() Module { return &dnfModule{} }) }
+// Registers the dnfModule.
+func init() {
+	osinfo, err := goosinfo.Retrieve()
+	if err != nil {
+		logger.Get().Fatal(err)
+	}
+	supportedDistributions := map[string]struct{}{
+		"redhat":     {},
+		"fedora":     {},
+		"rockylinux": {},
+		"almalinux":  {},
+	}
+	if _, ok := supportedDistributions[osinfo.Distribution]; !ok {
+		return
+	}
+	Register(dnfModuleName, func() Module { return &dnfModule{} })
+}
 
 // dnfModule is used to manage the dnf scope in the credospell configuration.
 type dnfModule struct{}
