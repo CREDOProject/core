@@ -3,6 +3,7 @@ package modules
 import (
 	"credo/logger"
 	"fmt"
+	"strings"
 
 	goosinfo "github.com/CREDOProject/go-osinfo"
 	"github.com/spf13/cobra"
@@ -37,6 +38,36 @@ func init() {
 
 // dnfModule is used to manage the dnf scope in the credospell configuration.
 type dnfModule struct{}
+
+type dnfSpell struct {
+	Name                 string     `yaml:"name"`
+	Optional             bool       `yaml:"optional,omitempty"`
+	Dependencies         []dnfSpell `yaml:"dependencies,omitempty"`
+	ExternalDependencies Config     `yaml:"external_dependencies,omitempty"`
+}
+
+// Function used to check if two dnfSpell objects are equal.
+func (d dnfSpell) equals(t equatable) bool {
+	o, ok := t.(dnfSpell)
+	if !ok {
+		return false
+	}
+	if strings.Compare(o.Name, d.Name) != 0 {
+		return false
+	}
+	if o.Optional != d.Optional {
+		return false
+	}
+	if len(o.Dependencies) != len(d.Dependencies) {
+		return false
+	}
+	for i := range o.Dependencies {
+		if !d.Dependencies[i].equals(o.Dependencies[i]) {
+			return false
+		}
+	}
+	return true
+}
 
 // Apply implements Module.
 func (d *dnfModule) Apply(any) error {
