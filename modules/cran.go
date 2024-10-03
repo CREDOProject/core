@@ -397,7 +397,7 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 func (c *cranModule) dependencyFunction(bioconductor bool) func(
 	o *gorcran.InstallOptions) (string, error) {
 	if bioconductor {
-		return gorcran.GetBioconductorDepenencies
+		return gorcran.GetBioconductorDependencies
 	}
 	return gorcran.GetDependencies
 }
