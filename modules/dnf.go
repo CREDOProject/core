@@ -39,7 +39,6 @@ func init() {
 		Register(dnfModuleName, func() Module { return &dnfModule{} })
 		return
 	}
-	Register(dnfModuleName, func() Module { return &dnfModule{} })
 }
 
 // dnfModule is used to manage the dnf scope in the credospell configuration.
