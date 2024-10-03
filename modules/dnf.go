@@ -29,7 +29,14 @@ func init() {
 		"centos": {},
 		"fedora": {},
 	}
-	if _, ok := supportedDistributions[osinfo.Distribution]; !ok {
+	for _, dist := range osinfo.Like {
+		if _, ok := supportedDistributions[dist]; ok {
+			Register(dnfModuleName, func() Module { return &dnfModule{} })
+			return
+		}
+	}
+	if _, ok := supportedDistributions[osinfo.Distribution]; ok {
+		Register(dnfModuleName, func() Module { return &dnfModule{} })
 		return
 	}
 	Register(dnfModuleName, func() Module { return &dnfModule{} })
