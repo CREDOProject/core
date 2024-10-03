@@ -25,10 +25,9 @@ func init() {
 		logger.Get().Fatal(err)
 	}
 	supportedDistributions := map[string]struct{}{
-		"redhat":     {},
-		"fedora":     {},
-		"rockylinux": {},
-		"almalinux":  {},
+		"rhel":   {},
+		"centos": {},
+		"fedora": {},
 	}
 	if _, ok := supportedDistributions[osinfo.Distribution]; !ok {
 		return
