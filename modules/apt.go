@@ -36,10 +36,16 @@ func init() {
 		"ubuntu": {},
 		"debian": {},
 	}
-	if _, ok := supportedDistributions[osinfo.Distribution]; !ok {
+	for _, distribution := range osinfo.Like {
+		if _, ok := supportedDistributions[distribution]; ok {
+			Register(aptModuleName, func() Module { return &aptModule{} })
+			return
+		}
+	}
+	if _, ok := supportedDistributions[osinfo.Distribution]; ok {
+		Register(aptModuleName, func() Module { return &aptModule{} })
 		return
 	}
-	Register(aptModuleName, func() Module { return &aptModule{} })
 }
 
 // aptModule is used to manage the apt scope in the credospell configuration.
