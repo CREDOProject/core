@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"credo/cache"
 	"credo/logger"
 	"fmt"
 	"strings"
@@ -137,4 +138,15 @@ func (d *dnfModule) Commit(config *Config, result any) error {
 // Save implements Module.
 func (d *dnfModule) Save(any) error {
 	panic("unimplemented")
+}
+
+func (*dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
+	if spell := cache.Retrieve(dnfModuleName, d.Name); spell != nil {
+		if newSpell, ok := spell.(dnfSpell); ok {
+			return &newSpell, nil
+		}
+	}
+	// TODO: Implement bare run
+	_ = cache.Insert(dnfModuleName, d.Name, &d)
+	return d, nil
 }
