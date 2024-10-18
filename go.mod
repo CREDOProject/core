@@ -14,7 +14,6 @@ require (
 
 require (
 	github.com/CREDOProject/go-anticonf-parser v0.0.2 // indirect
-	github.com/CREDOProject/go-dnf v0.0.0-20241018071505-3e11ba8cdd9b // indirect
 	github.com/aquasecurity/go-pep440-version v0.0.0-20210121094942-22b2f8951d46 // indirect
 	github.com/aquasecurity/go-version v0.0.0-20240603093900-cf8a8d29271d // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
