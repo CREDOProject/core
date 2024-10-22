@@ -13,6 +13,7 @@ github.com/CREDOProject/go-dnf v0.0.0-20241018071505-3e11ba8cdd9b h1:Btr1j9WbQZ+
 github.com/CREDOProject/go-dnf v0.0.0-20241018071505-3e11ba8cdd9b/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
 github.com/CREDOProject/go-dnf v0.0.0-20241018074941-712a4b203673/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
 github.com/CREDOProject/go-dnf v0.0.0-20241021113554-c1e5604b3469/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
+github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
 github.com/CREDOProject/go-isgiturl v1.0.0/go.mod h1:piuq92nTv3rEpyouSYNf7YMOafHQFaoK/pvFWMIUAG8=
 github.com/CREDOProject/go-osinfo v1.0.0 h1:T1Th6d8SZXYU1JedK88igcIoEi4oxJFBPheetgYSAss=
@@ -87,6 +88,8 @@ github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+zs/tPmkDkHx3U66D
 github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376/go.mod h1:an3vInlBmSxCcxctByoQdvwPiA7DTK7jaaFDBTtu0ic=
 github.com/go-git/go-billy/v5 v5.5.0 h1:yEY4yhzCDuMGSv83oGxiBotRzhwhNr8VZyphhiu+mTU=
 github.com/go-git/go-billy/v5 v5.5.0/go.mod h1:hmexnoNsr2SJU1Ju67OaNz5ASJY3+sHgFRpCtpDCKow=
+github.com/go-git/go-billy/v5 v5.6.0 h1:w2hPNtoehvJIxR00Vb4xX94qHQi/ApZfX+nBE2Cjio8=
+github.com/go-git/go-billy/v5 v5.6.0/go.mod h1:sFDq7xD3fn3E0GOwUSZqHo9lrkmx8xJhA0ZrfvjBRGM=
 github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399 h1:eMje31YglSBqCdIqdhKBW8lokaMrL3uTkpGYlE2OOT4=
 github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod h1:1OCfN199q1Jm3HZlxleg+Dw/mwps2Wbk9frAWm+4FII=
 github.com/go-git/go-git/v5 v5.12.0 h1:7Md+ndsjrzZxbddRDZjF14qK+NN56sy6wkqaVrjZtys=
@@ -110,6 +113,7 @@ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
 github.com/onsi/gomega v1.27.10 h1:naR28SdDFlqrG6kScpT8VWpu1xWY5nJRCF3XaYyBjhI=
 github.com/onsi/gomega v1.27.10/go.mod h1:RsS8tutOdbdgzbPtzzATp12yT7kM5I5aElG3evPbQ0M=
+github.com/onsi/gomega v1.34.1 h1:EUMJIKUjM8sKjYbtxQI9A4z2o+rruxnzNvpknOXie6k=
 github.com/pjbgf/sha1cd v0.3.0 h1:4D5XXmUUBUl/xQ6IjCkEAbqXskkq/4O7LmGn0AqMDs4=
 github.com/pjbgf/sha1cd v0.3.0/go.mod h1:nZ1rrWOcGJ5uZgEEVL1VUM9iRQiZvWdbZjkKyFzPPsI=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
