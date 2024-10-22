@@ -150,3 +150,7 @@ func (*dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
 	_ = cache.Insert(dnfModuleName, d.Name, &d)
 	return d, nil
 }
+
+func (*dnfModule) getDnf() *dnf.Dnf {
+	return dnf.New("")
+}
