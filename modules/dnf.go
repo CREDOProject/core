@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	dnf "github.com/CREDOProject/go-dnf"
 	goosinfo "github.com/CREDOProject/go-osinfo"
 	"github.com/spf13/cobra"
 )
@@ -107,8 +108,12 @@ func (d *dnfModule) CliConfig(config *Config) *cobra.Command {
 // Intended to be used by cobra.
 func (d *dnfModule) cobraRun(config *Config) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
-		// TODO: implement run
-		err := d.Commit(config, nil)
+		name := args[0]
+		spell, err := d.bareRun(&dnfSpell{Name: name})
+		if err != nil {
+			logger.Get().Fatal(err)
+		}
+		err = d.Commit(config, spell)
 		if err != nil && err != ErrAlreadyPresent {
 			logger.Get().Fatal(err)
 		}
