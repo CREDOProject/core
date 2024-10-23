@@ -132,7 +132,15 @@ func (*dnfModule) cobraArgs() func(*cobra.Command, []string) error {
 
 // Commit implements Module.
 func (d *dnfModule) Commit(config *Config, result any) error {
-	panic("unimplemented")
+	newEntry, ok := result.(*dnfSpell)
+	if !ok {
+		return ErrConverting
+	}
+	if Contains(config.Dnf, *newEntry) {
+		return ErrAlreadyPresent
+	}
+	config.Dnf = append(config.Dnf, *newEntry)
+	return nil
 }
 
 // Save implements Module.
