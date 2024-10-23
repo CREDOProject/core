@@ -153,13 +153,29 @@ func (d *dnfModule) Save(any) error {
 	panic("unimplemented")
 }
 
-func (*dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
+func (m *dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
 	if spell := cache.Retrieve(dnfModuleName, d.Name); spell != nil {
 		if newSpell, ok := spell.(dnfSpell); ok {
 			return &newSpell, nil
 		}
 	}
-	// TODO: Implement bare run
+	lDnf := m.getDnf()
+	dependencies, err := lDnf.Depends(d.Name, &dnf.Options{
+		Verbose: false,
+		DryRun:  true,
+	})
+	if err != nil {
+		return nil, fmt.Errorf(`[dnf.bareRun]: %v`, err)
+	}
+	for _, dependency := range dependencies {
+		d.Dependencies = append(
+			d.Dependencies,
+			dnfSpell{
+				Name: dependency.Name,
+			},
+		)
+	}
+	lDnf.Install(d.Name, &dnf.Options{DryRun: true})
 	_ = cache.Insert(dnfModuleName, d.Name, &d)
 	return d, nil
 }
