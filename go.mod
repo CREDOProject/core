@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.2
 
 require (
-	github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9
+	github.com/CREDOProject/go-dnf v0.1.4
 	github.com/CREDOProject/go-osinfo v1.0.0
 	github.com/CREDOProject/go-pip v0.1.1
 	github.com/CREDOProject/go-rdepends v0.1.2

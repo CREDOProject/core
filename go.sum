@@ -11,9 +11,14 @@ github.com/CREDOProject/go-conda v0.1.1 h1:oniGCr6lZKr3kxXQjxeofewVuDIfl/a+Oi4P5
 github.com/CREDOProject/go-conda v0.1.1/go.mod h1:d2YeiK6GMTTa+ve8rD6wRVc9O7kxxqpEHJ37L6RlCuI=
 github.com/CREDOProject/go-dnf v0.0.0-20241018071505-3e11ba8cdd9b h1:Btr1j9WbQZ+Q68AK51Z2QSm0zoYCMut6B7oRX6jI2jw=
 github.com/CREDOProject/go-dnf v0.0.0-20241018071505-3e11ba8cdd9b/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
+github.com/CREDOProject/go-dnf v0.0.0-20241018074941-712a4b203673 h1:gRaCxQpm+HL0Sk0cWw/l8TNUf+4bbbwwarFtgJEAcOA=
 github.com/CREDOProject/go-dnf v0.0.0-20241018074941-712a4b203673/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
+github.com/CREDOProject/go-dnf v0.0.0-20241021113554-c1e5604b3469 h1:kh5Bfe0Np44/59+aKQYi9hRaA9904dyQvq/+5K1gQx0=
 github.com/CREDOProject/go-dnf v0.0.0-20241021113554-c1e5604b3469/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
+github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9 h1:+oD6QzxsQHSHsYZvqn4LiwKLHhTn5QwPDDCWesaBLXI=
 github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
+github.com/CREDOProject/go-dnf v0.1.4 h1:Co/l8Wv1/5P0cIuEsiXdhapRRnvIly+XSLLCq6S2rVI=
+github.com/CREDOProject/go-dnf v0.1.4/go.mod h1:IT1dUorl7/BaoQtvr/nIPMw1TbezhGok+j6AsuLC+Do=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
 github.com/CREDOProject/go-isgiturl v1.0.0/go.mod h1:piuq92nTv3rEpyouSYNf7YMOafHQFaoK/pvFWMIUAG8=
 github.com/CREDOProject/go-osinfo v1.0.0 h1:T1Th6d8SZXYU1JedK88igcIoEi4oxJFBPheetgYSAss=
