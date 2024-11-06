@@ -163,6 +163,13 @@ func (c *cranModule) Save(anyspell any) error {
 	if err != nil {
 		return fmt.Errorf(`[cran]: %v`, err)
 	}
+	filesMap, err := listDownloadedFilesInMap(destdir)
+	if err != nil {
+		return fmt.Errorf(`[cran]: %v`, err)
+	}
+	if _, present := filesMap[spell.PackagePath]; present {
+		return nil
+	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
 			return err
