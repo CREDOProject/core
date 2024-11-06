@@ -301,8 +301,7 @@ func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	if spell := cache.Retrieve(cranModuleName,
 		s.PackageName); spell != nil {
-		newSpell, ok := spell.(cranSpell)
-		if ok {
+		if newSpell, ok := spell.(cranSpell); ok {
 			return &newSpell, nil
 		}
 	}
