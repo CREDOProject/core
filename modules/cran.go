@@ -261,7 +261,7 @@ func (c *cranModule) cobraArgs() func(*cobra.Command, []string) error {
 // cobraRun is used to run the module from the command line.
 // It serves as an entry point to the cranModule.
 //
-// This function is inteded to be used by cobra.
+// This function is intended to be used by cobra.
 func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
 		isBioconductor := strings.Compare(
