@@ -4,6 +4,7 @@ import (
 	"credo/cache"
 	"credo/logger"
 	"fmt"
+	"os"
 	"strings"
 
 	dnf "github.com/CREDOProject/go-dnf"
@@ -163,11 +164,15 @@ func (m *dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
 	dependencies, err := lDnf.Depends(d.Name, &dnf.Options{
 		Verbose: false,
 		DryRun:  true,
+		Output:  os.Stdout,
 	})
 	if err != nil {
 		return nil, fmt.Errorf(`[dnf.bareRun]: %v`, err)
 	}
-	for _, dependency := range dependencies {
+	if len(dependencies) < 1 {
+		return nil, fmt.Errorf(`[dnf.bareRun]: Package %s found.`, d.Name)
+	}
+	for _, dependency := range dependencies[1:] {
 		d.Dependencies = append(
 			d.Dependencies,
 			dnfSpell{
@@ -175,11 +180,18 @@ func (m *dnfModule) bareRun(d *dnfSpell) (*dnfSpell, error) {
 			},
 		)
 	}
-	lDnf.Install(d.Name, &dnf.Options{DryRun: true})
+	err = lDnf.Install(dependencies[0].Name,
+		&dnf.Options{DryRun: true,
+			Output: os.Stdout})
+	if err != nil {
+		return nil, fmt.Errorf(`dnf.bareRun]: %v`, err)
+	}
+	d.Name = dependencies[0].Name
 	_ = cache.Insert(dnfModuleName, d.Name, &d)
 	return d, nil
 }
 
 func (*dnfModule) getDnf() *dnf.Dnf {
+	// Passing an empty string to autodetect dnf in system path.
 	return dnf.New("")
 }
