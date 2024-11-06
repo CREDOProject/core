@@ -156,6 +156,15 @@ func (c *cranModule) Save(anyspell any) error {
 	if !ok {
 		return ErrConverting
 	}
+	for _, dep := range spell.Dependencies {
+		if err := c.Save(dep); err != nil {
+			return err
+		}
+	}
+	err := DeepSave(&spell.ExternalDependencies)
+	if err != nil {
+		return nil
+	}
 	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
 		return nil
 	}
@@ -168,15 +177,8 @@ func (c *cranModule) Save(anyspell any) error {
 		return fmt.Errorf(`[cran]: %v`, err)
 	}
 	if _, present := filesMap[spell.PackagePath]; present {
-		return nil
-	}
-	for _, dep := range spell.Dependencies {
-		if err := c.Save(dep); err != nil {
-			return err
-		}
-	}
-	err = DeepSave(&spell.ExternalDependencies)
-	if err != nil {
+		logger.Get().Printf(`[cran]: Skipped saving %s, already present.`,
+			spell.PackageName)
 		return nil
 	}
 	downloadFunction := c.downloadFunction(spell.BioConductor)
