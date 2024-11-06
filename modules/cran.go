@@ -8,8 +8,10 @@ import (
 	"credo/suggest"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -204,6 +206,23 @@ func (c *cranModule) destinationDirectory() (string, error) {
 		return "", err
 	}
 	return directory, nil
+}
+
+func listDownloadedFilesInMap(destdir string) (map[string]struct{}, error) {
+	filesMap := make(map[string]struct{})
+	err := filepath.Walk(destdir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			filesMap[info.Name()] = struct{}{}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return filesMap, nil
 }
 
 func (c *cranModule) libraryDirectory() (string, error) {
