@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 
@@ -63,7 +64,7 @@ func (c *cranModule) Apply(anyspell any) error {
 	if err != nil {
 		return err
 	}
-	for _, dep := range spell.Dependencies {
+	for _, dep := range slices.Backward(spell.Dependencies) {
 		err := c.Apply(dep)
 		if err != nil {
 			return err
