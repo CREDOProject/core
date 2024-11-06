@@ -400,7 +400,7 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 	outputString := buffer.String()
 	dependencyList := strings.Split(strings.Trim(outputString, "\n"), "\n")
 	deps := []cranSpell{}
-	var MaxWorkers chan int = make(chan int, 8)
+	var MaxWorkers chan int = make(chan int, 4)
 	var wg sync.WaitGroup
 	for _, dep := range dependencyList {
 		if dep == "" {
