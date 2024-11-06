@@ -159,14 +159,14 @@ func (c *cranModule) Save(anyspell any) error {
 	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
 		return nil
 	}
+	destdir, err := c.destinationDirectory()
+	if err != nil {
+		return fmt.Errorf(`[cran]: %v`, err)
+	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
 			return err
 		}
-	}
-	destdir, err := c.destinationDirectory()
-	if err != nil {
-		return err
 	}
 	err = DeepSave(&spell.ExternalDependencies)
 	if err != nil {
