@@ -456,6 +456,7 @@ func (c *cranModule) installBioConductor(cfg *Config) error {
 	if err == ErrAlreadyPresent {
 		return nil
 	}
+	err = c.Apply(spell)
 	return err
 }
 
