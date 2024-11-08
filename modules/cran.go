@@ -171,11 +171,11 @@ func (c *cranModule) Save(anyspell any) error {
 	}
 	destdir, err := c.destinationDirectory()
 	if err != nil {
-		return fmt.Errorf(`[cran]: %v`, err)
+		return fmt.Errorf(`[cran] dest: %v`, err)
 	}
 	filesMap, err := listDownloadedFilesInMap(destdir)
 	if err != nil {
-		return fmt.Errorf(`[cran]: %v`, err)
+		return fmt.Errorf(`[cran] list: %v`, err)
 	}
 	if _, present := filesMap[spell.PackagePath]; present {
 		logger.Get().Printf(`[cran]: Skipped saving %s, already present.`,
@@ -307,7 +307,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	}
 	rscriptBin, err := gorscript.DetectRscriptBinary()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] detect: %v`, err)
 	}
 	tempdir := os.TempDir()
 	downloadOptions := &gorcran.DownloadOptions{
@@ -318,27 +318,27 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	downloadFunction := c.downloadFunction(s.BioConductor)
 	cmd, err := downloadFunction(downloadOptions)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] download: %v`, err)
 	}
 	script, err := gorscript.New(rscriptBin).Evaluate(cmd).Seal()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] generate: %v`, err)
 	}
 	var buffer bytes.Buffer
 	script.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	script.Stderr = os.Stderr
 	err = script.Run()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] run: %v`, err)
 	}
 	outputString := buffer.String()
 	pkgPath, err := gorcran.GetPath(outputString)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] path: %v`, err)
 	}
 	deps, err := c.getDependencies(rscriptBin, s)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran] deps: %v`, err)
 	}
 	additionalDependencies, err := gordepends.DependsOn(pkgPath)
 	if err != nil {
@@ -356,7 +356,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	}
 	parsedPath, err := gorcran.ParsePath(outputString)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(`[cran]i parse: %v`, err)
 	}
 	finalSpell := cranSpell{
 		PackageName:  s.PackageName,
