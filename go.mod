@@ -16,13 +16,13 @@ require (
 require (
 	github.com/CREDOProject/go-anticonf-parser v0.0.2 // indirect
 	github.com/aquasecurity/go-pep440-version v0.0.0-20210121094942-22b2f8951d46 // indirect
-	github.com/aquasecurity/go-version v0.0.0-20240603093900-cf8a8d29271d // indirect
+	github.com/aquasecurity/go-version v0.0.0-20241105054539-1951e80d786f // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
-	pault.ag/go/debian v0.16.0 // indirect
+	pault.ag/go/debian v0.17.0 // indirect
 	pault.ag/go/topsort v0.1.1 // indirect
 )
 
@@ -32,10 +32,10 @@ require (
 	github.com/CREDOProject/go-conda v0.1.1
 	github.com/CREDOProject/go-isgiturl v1.0.0
 	github.com/CREDOProject/go-pythonvenv v0.1.2
-	github.com/CREDOProject/go-rcran v0.6.5
+	github.com/CREDOProject/go-rcran v0.7.0
 	github.com/CREDOProject/go-rscript v0.0.1
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/ProtonMail/go-crypto v1.0.0 // indirect
+	github.com/ProtonMail/go-crypto v1.1.2 // indirect
 	github.com/cloudflare/circl v1.5.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.4 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
@@ -49,9 +49,9 @@ require (
 	github.com/skeema/knownhosts v1.3.0 // indirect
 	github.com/spf13/cobra v1.8.1
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
-	golang.org/x/crypto v0.28.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/crypto v0.29.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 )
