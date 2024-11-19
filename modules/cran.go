@@ -81,7 +81,7 @@ func (c *cranModule) Apply(anyspell any) error {
 	localInstallOptions := gorcran.InstallOptions{
 		PackageName: path.Join(destdir, spell.PackagePath),
 		Repository:  "NULL",
-		Lib:         libraryDir,
+		Library:     libraryDir,
 	}
 	cmd, err := gorcran.InstallLocal(&localInstallOptions)
 	if err != nil {
