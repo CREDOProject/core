@@ -183,7 +183,12 @@ func (c *cranModule) Save(anyspell any) error {
 		return nil
 	}
 	downloadFunction := c.downloadFunction(spell.BioConductor)
+	libraryDir, err := c.libraryDirectory()
+	if err != nil {
+		return err
+	}
 	cmd, err := downloadFunction(&gorcran.DownloadOptions{
+		Library:              libraryDir,
 		PackageName:          spell.PackageName,
 		DestinationDirectory: destdir,
 		Repository:           spell.Repository,
@@ -310,7 +315,12 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 		return nil, fmt.Errorf(`[cran] detect: %v`, err)
 	}
 	tempdir := os.TempDir()
+	libraryDir, err := c.libraryDirectory()
+	if err != nil {
+		return nil, err
+	}
 	downloadOptions := &gorcran.DownloadOptions{
+		Library:              libraryDir,
 		PackageName:          s.PackageName,
 		DestinationDirectory: tempdir,
 		Repository:           s.Repository,
