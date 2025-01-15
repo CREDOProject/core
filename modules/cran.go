@@ -53,9 +53,9 @@ type cranModule struct{}
 
 // Apply implements Module.
 func (c *cranModule) Apply(anyspell any) error {
-	spell, ok := anyspell.(cranSpell)
+	spell, ok := anyspell.(*cranSpell)
 	if !ok {
-		return ErrConverting
+		return fmt.Errorf("[cran/apply]: %v", ErrConverting)
 	}
 	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
 		return nil
@@ -65,7 +65,7 @@ func (c *cranModule) Apply(anyspell any) error {
 		return err
 	}
 	for _, dep := range slices.Backward(spell.Dependencies) {
-		err := c.Apply(dep)
+		err := c.Apply(&dep)
 		if err != nil {
 			return err
 		}
@@ -139,7 +139,7 @@ func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 func (c *cranModule) Commit(config *Config, result any) error {
 	newEntry, ok := result.(*cranSpell)
 	if !ok {
-		return ErrConverting
+		return fmt.Errorf("[cran/commit]: %v", ErrConverting)
 	}
 	if newEntry == nil {
 		return nil
@@ -155,7 +155,7 @@ func (c *cranModule) Commit(config *Config, result any) error {
 func (c *cranModule) Save(anyspell any) error {
 	spell, ok := anyspell.(cranSpell)
 	if !ok {
-		return ErrConverting
+		return fmt.Errorf("[cran/save]: %v", ErrConverting)
 	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
@@ -352,7 +352,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	}
 	additionalDependencies, err := gordepends.DependsOn(pkgPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("[cran] rdepends: %v", err)
 	}
 	// Register suggestions.
 	suggestions := filter.Filter(additionalDependencies,
@@ -366,7 +366,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	}
 	parsedPath, err := gorcran.ParsePath(outputString)
 	if err != nil {
-		return nil, fmt.Errorf(`[cran]i parse: %v`, err)
+		return nil, fmt.Errorf(`[cran] parse: %v`, err)
 	}
 	finalSpell := cranSpell{
 		PackageName:  s.PackageName,
