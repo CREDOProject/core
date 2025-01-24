@@ -378,7 +378,12 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 
 func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpell, error) {
 	dependencyFunction := c.dependencyFunction(s.BioConductor)
+	libraryDir, err := c.libraryDirectory()
+	if err != nil {
+		return nil, err
+	}
 	cmd, err := dependencyFunction(&gorcran.InstallOptions{
+		Library:     libraryDir,
 		PackageName: s.PackageName,
 		Repository:  s.Repository,
 		DryRun:      false,
