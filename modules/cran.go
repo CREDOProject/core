@@ -53,7 +53,7 @@ type cranModule struct{}
 
 // Apply implements Module.
 func (c *cranModule) Apply(anyspell any) error {
-	spell, ok := anyspell.(*cranSpell)
+	spell, ok := anyspell.(cranSpell)
 	if !ok {
 		return fmt.Errorf("[cran/apply]: %v", ErrConverting)
 	}
@@ -393,10 +393,10 @@ func (c *cranModule) getDependencies(rscriptBin string, s cranSpell) ([]cranSpel
 		return nil, err
 	}
 	cmd, err := dependencyFunction(&gorcran.InstallOptions{
-		Library:     libraryDir,
 		PackageName: s.PackageName,
 		Repository:  s.Repository,
 		DryRun:      false,
+		Library:     libraryDir,
 	})
 	if err != nil {
 		return nil, err
@@ -468,10 +468,14 @@ func (c *cranModule) installBioConductor(cfg *Config) error {
 		return err
 	}
 	err = c.Commit(cfg, spell)
-	if err == ErrAlreadyPresent {
-		return nil
+	if err != ErrAlreadyPresent {
+		return err
 	}
-	err = c.Apply(spell)
+	err = c.Save(*spell)
+	if err != nil {
+		return err
+	}
+	err = c.Apply(*spell)
 	return err
 }
 
