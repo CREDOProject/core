@@ -53,8 +53,16 @@ type cranModule struct{}
 
 // Apply implements Module.
 func (c *cranModule) Apply(anyspell any) error {
-	spell, ok := anyspell.(cranSpell)
-	if !ok {
+	var spell cranSpell
+	switch s := anyspell.(type) {
+	case cranSpell:
+		spell = s
+	case *cranSpell:
+		if s == nil {
+			return fmt.Errorf("[cran/apply]: %v", ErrConverting)
+		}
+		spell = *s
+	default:
 		return fmt.Errorf("[cran/apply]: %v", ErrConverting)
 	}
 	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
