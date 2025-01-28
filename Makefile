@@ -1,4 +1,10 @@
-VERSION := $(shell git describe --tags --exact-match 2>/dev/null || echo "unreleased-$(shell git rev-parse --short HEAD)")
+VERSION := $(shell if [ -n "$$(git status --porcelain)" ]; then \
+               echo "unreleased-$(shell git rev-parse --short HEAD)"; \
+            elif git describe --tags --exact-match >/dev/null 2>&1; then \
+               git describe --tags; \
+            else \
+               git rev-parse --short HEAD; \
+            fi)
 COMMIT := $(shell git rev-parse HEAD)
 BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
