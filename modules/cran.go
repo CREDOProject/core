@@ -476,7 +476,7 @@ func (c *cranModule) installBioConductor(cfg *Config) error {
 		return err
 	}
 	err = c.Commit(cfg, spell)
-	if err != ErrAlreadyPresent {
+	if err != ErrAlreadyPresent && err != nil {
 		return err
 	}
 	err = c.Save(*spell)
