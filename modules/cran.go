@@ -21,6 +21,7 @@ import (
 	gordependsP "github.com/CREDOProject/go-rdepends/providers"
 	gorscript "github.com/CREDOProject/go-rscript"
 	"github.com/CREDOProject/sharedutils/filter"
+	"github.com/CREDOProject/sharedutils/types"
 	"github.com/spf13/cobra"
 )
 
@@ -53,22 +54,14 @@ type cranModule struct{}
 
 // Apply implements Module.
 func (c *cranModule) Apply(anyspell any) error {
-	var spell cranSpell
-	switch s := anyspell.(type) {
-	case cranSpell:
-		spell = s
-	case *cranSpell:
-		if s == nil {
-			return fmt.Errorf("[cran/apply]: %v", ErrConverting)
-		}
-		spell = *s
-	default:
-		return fmt.Errorf("[cran/apply]: %v", ErrConverting)
+	spell, err := types.To[cranSpell](anyspell)
+	if err != nil {
+		return fmt.Errorf("%v", err)
 	}
 	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
 		return nil
 	}
-	err := DeepApply(&spell.ExternalDependencies)
+	err = DeepApply(&spell.ExternalDependencies)
 	if err != nil {
 		return err
 	}
@@ -145,9 +138,9 @@ func (c *cranModule) CliConfig(config *Config) *cobra.Command {
 
 // Commit implements Module.
 func (c *cranModule) Commit(config *Config, result any) error {
-	newEntry, ok := result.(*cranSpell)
-	if !ok {
-		return fmt.Errorf("[cran/commit]: %v", ErrConverting)
+	newEntry, err := types.To[cranSpell](result)
+	if err != nil {
+		return fmt.Errorf("%v", err)
 	}
 	if newEntry == nil {
 		return nil
@@ -161,16 +154,16 @@ func (c *cranModule) Commit(config *Config, result any) error {
 
 // Save implements Module.
 func (c *cranModule) Save(anyspell any) error {
-	spell, ok := anyspell.(cranSpell)
-	if !ok {
-		return fmt.Errorf("[cran/save]: %v", ErrConverting)
+	spell, err := types.To[cranSpell](anyspell)
+	if err != nil {
+		return fmt.Errorf("%v", err)
 	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
 			return err
 		}
 	}
-	err := DeepSave(&spell.ExternalDependencies)
+	err = DeepSave(&spell.ExternalDependencies)
 	if err != nil {
 		return nil
 	}
@@ -314,9 +307,11 @@ func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 	if spell := cache.Retrieve(cranModuleName,
 		s.PackageName); spell != nil {
-		if newSpell, ok := spell.(cranSpell); ok {
-			return &newSpell, nil
+		newSpell, err := types.To[cranSpell](spell)
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
 		}
+		return newSpell, nil
 	}
 	rscriptBin, err := gorscript.DetectRscriptBinary()
 	if err != nil {
@@ -490,8 +485,8 @@ func (c *cranModule) installBioConductor(cfg *Config) error {
 // equals checks if two cranSpell objects are equal.
 func (c cranSpell) equals(t equatable) bool {
 	// TODO: implement equality check.
-	s, ok := t.(cranSpell)
-	if !ok {
+	s, err := types.To[cranSpell](t)
+	if err != nil {
 		return false
 	}
 	equality := len(s.Dependencies) == len(c.Dependencies)
