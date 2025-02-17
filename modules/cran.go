@@ -309,7 +309,9 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 		s.PackageName); spell != nil {
 		newSpell, err := types.To[cranSpell](spell)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			logger.Get().Printf(`[cran/bareRun]: %v`, err)
+		} else {
+			return newSpell, nil
 		}
 		return newSpell, nil
 	}
