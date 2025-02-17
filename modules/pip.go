@@ -12,6 +12,7 @@ import (
 	gopip "github.com/CREDOProject/go-pip"
 	"github.com/CREDOProject/go-pip/utils"
 	pythonvenv "github.com/CREDOProject/go-pythonvenv"
+	"github.com/CREDOProject/sharedutils/types"
 	"github.com/spf13/cobra"
 )
 
@@ -35,6 +36,10 @@ type pipModule struct{}
 
 // Apply implements Module.
 func (m *pipModule) Apply(anySpell any) error {
+	converted, err := types.To[pipSpell](anySpell)
+	if err != nil {
+		return fmt.Errorf("Error converting pip spell, %v", err)
+	}
 	project, err := project.ProjectPath()
 	if err != nil {
 		return err
@@ -45,7 +50,7 @@ func (m *pipModule) Apply(anySpell any) error {
 	}
 	downloadPath := path.Join(*project, pipModuleName)
 	cmd, err := gopip.New(*pipBinary).
-		Install(anySpell.(pipSpell).Name).
+		Install(converted.Name).
 		FindLinks(downloadPath).
 		Seal()
 	err = cmd.Run(&gopip.RunOptions{
@@ -83,22 +88,24 @@ type pipSpell struct {
 // The function returns true if the two objects are equal.
 // Otherwise, it returns false.
 func (s pipSpell) equals(t equatable) bool {
-	if o, ok := t.(pipSpell); ok {
-		return strings.Compare(s.Name, o.Name) == 0
+	o, err := types.To[pipSpell](t)
+	if err != nil {
+		return false
 	}
-	return false
+	return strings.Compare(s.Name, o.Name) == 0
+
 }
 
 // Commit implements Module.
 func (m *pipModule) Commit(config *Config, result any) error {
-	newEntry, ok := result.(pipSpell)
-	if !ok {
+	newEntry, err := types.To[pipSpell](result)
+	if err != nil {
 		return ErrConverting
 	}
-	if Contains(config.Pip, newEntry) {
+	if Contains(config.Pip, *newEntry) {
 		return ErrAlreadyPresent
 	}
-	config.Pip = append(config.Pip, newEntry)
+	config.Pip = append(config.Pip, *newEntry)
 	return nil
 }
 
@@ -131,9 +138,9 @@ func getPipBinary() (*string, error) {
 
 func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	if spell := cache.Retrieve(pipModuleName, p.Name); spell != nil {
-		newSpell, ok := spell.(pipSpell)
-		if ok {
-			return newSpell, nil
+		newSpell, err := types.To[pipSpell](spell)
+		if err != nil {
+			return *newSpell, nil
 		}
 	}
 	pipBinary, err := getPipBinary()
@@ -158,7 +165,11 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 
 // Save implements Module.
 func (m *pipModule) Save(anySpell any) error {
-	if cache.Retrieve(pipModuleName, anySpell.(pipSpell).Name) != nil {
+	converted, err := types.To[pipSpell](anySpell)
+	if err != nil {
+		return fmt.Errorf("Error converting pip spell, %v", err)
+	}
+	if cache.Retrieve(pipModuleName, converted.Name) != nil {
 		return nil
 	}
 	project, err := project.ProjectPath()
@@ -171,7 +182,7 @@ func (m *pipModule) Save(anySpell any) error {
 	}
 	downloadPath := path.Join(*project, pipModuleName)
 	cmd, err := gopip.New(*pipBinary).
-		Download(anySpell.(pipSpell).Name, downloadPath).
+		Download(converted.Name, downloadPath).
 		Seal()
 	err = cmd.Run(&gopip.RunOptions{
 		Output: os.Stdout,
@@ -179,7 +190,7 @@ func (m *pipModule) Save(anySpell any) error {
 	if err != nil {
 		return err
 	}
-	_ = cache.Insert(pipModuleName, anySpell.(pipSpell).Name, true)
+	_ = cache.Insert(pipModuleName, converted.Name, true)
 	return nil
 }
 
