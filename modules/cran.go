@@ -313,7 +313,6 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 		} else {
 			return newSpell, nil
 		}
-		return newSpell, nil
 	}
 	rscriptBin, err := gorscript.DetectRscriptBinary()
 	if err != nil {
