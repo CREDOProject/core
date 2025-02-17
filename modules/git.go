@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	goisgiturl "github.com/CREDOProject/go-isgiturl"
+	"github.com/CREDOProject/sharedutils/types"
 )
 
 const gitModuleName = "git"
@@ -44,14 +45,14 @@ func (m *gitModule) BulkApply(config *Config) error {
 }
 
 func (m *gitModule) Commit(config *Config, result any) error {
-	newEntry, ok := result.(gitSpell)
-	if !ok {
+	newEntry, err := types.To[gitSpell](result)
+	if err != nil {
 		return ErrConverting
 	}
-	if Contains(config.Git, newEntry) {
+	if Contains(config.Git, *newEntry) {
 		return ErrAlreadyPresent
 	}
-	config.Git = append(config.Git, newEntry)
+	config.Git = append(config.Git, *newEntry)
 	return nil
 }
 
@@ -85,8 +86,8 @@ func (m *gitModule) bareRun(p gitSpell) (gitSpell, error) {
 }
 
 func (m *gitModule) Save(anySpell any) error {
-	spell, ok := anySpell.(gitSpell)
-	if !ok {
+	spell, err := types.To[gitSpell](anySpell)
+	if err != nil {
 		return ErrConverting
 	}
 
@@ -138,11 +139,12 @@ type gitSpell struct {
 // The function returns true if the two objects are equal.
 // Otherwise, it returns false.
 func (s gitSpell) equals(t equatable) bool {
-	if o, ok := t.(gitSpell); ok {
-		return strings.Compare(s.URL, o.URL) == 0 &&
-			strings.Compare(s.Version, o.Version) == 0
+	o, err := types.To[gitSpell](t)
+	if err != nil {
+		return false
 	}
-	return false
+	return strings.Compare(s.URL, o.URL) == 0 &&
+		strings.Compare(s.Version, o.Version) == 0
 }
 
 // Function used to run the module from the command line.
