@@ -140,6 +140,8 @@ func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	if spell := cache.Retrieve(pipModuleName, p.Name); spell != nil {
 		newSpell, err := types.To[pipSpell](spell)
 		if err != nil {
+			logger.Get().Printf(`[pip/bareRun]: %v`, err)
+		} else {
 			return *newSpell, nil
 		}
 	}
