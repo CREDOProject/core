@@ -12,6 +12,7 @@ import (
 
 	"github.com/CREDOProject/go-apt-client"
 	goosinfo "github.com/CREDOProject/go-osinfo"
+	"github.com/CREDOProject/sharedutils/types"
 	"github.com/spf13/cobra"
 )
 
@@ -68,18 +69,19 @@ type aptSpell struct {
 // The function returns true if the two objects are equal.
 // Otherwise, it returns false.
 func (a aptSpell) equals(t equatable) bool {
-	if o, ok := t.(aptSpell); ok {
-		equality := len(o.Dependencies) == len(a.Dependencies)
-		if !equality {
-			return false
-		}
-		for i := range o.Dependencies {
-			equality = equality &&
-				o.Dependencies[i].equals(a.Dependencies[i])
-		}
-		return equality
+	o, err := types.To[aptSpell](t)
+	if err != nil {
+		return false
 	}
-	return false
+	equality := len(o.Dependencies) == len(a.Dependencies)
+	if !equality {
+		return false
+	}
+	for i := range o.Dependencies {
+		equality = equality &&
+			o.Dependencies[i].equals(a.Dependencies[i])
+	}
+	return equality
 }
 
 // BulkSave implements Module.
@@ -150,9 +152,9 @@ func (m *aptModule) cobraRun(config *Config) func(*cobra.Command, []string) {
 
 func (*aptModule) bareRun(s aptSpell) (aptSpell, error) {
 	if spell := cache.Retrieve(aptModuleName, s.Name); spell != nil {
-		newSpell, ok := spell.(aptSpell)
-		if ok {
-			return newSpell, nil
+		newSpell, err := types.To[aptSpell](s)
+		if err == nil {
+			return *newSpell, nil
 		}
 	}
 	aptPack := &apt.Package{
@@ -191,21 +193,21 @@ func (*aptModule) bareRun(s aptSpell) (aptSpell, error) {
 
 // Commit implements Module.
 func (*aptModule) Commit(config *Config, result any) error {
-	newEntry, ok := result.(aptSpell)
-	if !ok {
+	newEntry, err := types.To[aptSpell](result)
+	if err != nil {
 		return ErrConverting
 	}
-	if Contains(config.Apt, newEntry) {
+	if Contains(config.Apt, *newEntry) {
 		return ErrAlreadyPresent
 	}
-	config.Apt = append(config.Apt, newEntry)
+	config.Apt = append(config.Apt, *newEntry)
 	return nil
 }
 
 // Save implements Module.
 func (*aptModule) Save(anySpell any) error {
-	spell, ok := anySpell.(aptSpell)
-	if !ok {
+	spell, err := types.To[aptSpell](anySpell)
+	if err != nil {
 		return ErrConverting
 	}
 	if cache.Retrieve(aptModuleName, spell.Name) != nil {
@@ -230,8 +232,8 @@ func (*aptModule) Save(anySpell any) error {
 
 // Apply implements Module.
 func (m *aptModule) Apply(anySpell any) error {
-	spell, ok := anySpell.(aptSpell)
-	if !ok {
+	spell, err := types.To[aptSpell](anySpell)
+	if err != nil {
 		return ErrConverting
 	}
 	project, err := project.ProjectPath()
