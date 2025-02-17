@@ -11,6 +11,7 @@ import (
 
 	goconda "github.com/CREDOProject/go-conda"
 	condautils "github.com/CREDOProject/go-conda/utils"
+	"github.com/CREDOProject/sharedutils/types"
 	"github.com/spf13/cobra"
 )
 
@@ -60,11 +61,12 @@ type condaSpell struct {
 // This function is useful for comparing two condaSpell objects to determine if
 // they represent the same configuration or not.
 func (c condaSpell) equals(t equatable) bool {
-	if o, ok := t.(condaSpell); ok {
-		return strings.Compare(c.Name, o.Name) == 0 &&
-			strings.Compare(c.Channel, o.Channel) == 0
+	o, err := types.To[condaSpell](t)
+	if err != nil {
+		return false
 	}
-	return false
+	return strings.Compare(c.Name, o.Name) == 0 &&
+		strings.Compare(c.Channel, o.Channel) == 0
 }
 
 // BulkSave implements Module.
@@ -128,22 +130,24 @@ func (c *condaModule) CliConfig(config *Config) *cobra.Command {
 
 // Commit implements Module.
 func (c *condaModule) Commit(config *Config, result any) error {
-	newEntry, ok := result.(condaSpell)
-	if !ok {
+	newEntry, err := types.To[condaSpell](result)
+	if err != nil {
 		return ErrConverting
 	}
-	if Contains(config.Conda, newEntry) {
+	if Contains(config.Conda, *newEntry) {
 		return ErrAlreadyPresent
 	}
-	config.Conda = append(config.Conda, newEntry)
+	config.Conda = append(config.Conda, *newEntry)
 	return nil
 }
 
 func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 	if spell := cache.Retrieve(condaModuleName, p.Name); spell != nil {
-		newSpell, ok := spell.(condaSpell)
-		if ok {
-			return newSpell, nil
+		newSpell, err := types.To[condaSpell](spell)
+		if err != nil {
+			logger.Get().Printf(`[conda/bareRun]: %v`, err)
+		} else {
+			return *newSpell, nil
 		}
 	}
 	condaBinary, err := condautils.DetectCondaBinary()
@@ -169,8 +173,8 @@ func (c *condaModule) bareRun(p condaSpell) (condaSpell, error) {
 
 // Save implements Module.
 func (c *condaModule) Save(anySpell any) error {
-	spell, ok := anySpell.(condaSpell)
-	if !ok {
+	spell, err := types.To[condaSpell](anySpell)
+	if err != nil {
 		return ErrConverting
 	}
 	if cache.Retrieve(condaModuleName, spell.Name) != nil {
