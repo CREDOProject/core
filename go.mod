@@ -8,7 +8,7 @@ require (
 	github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9
 	github.com/CREDOProject/go-osinfo v1.0.0
 	github.com/CREDOProject/go-pip v0.1.1
-	github.com/CREDOProject/go-rdepends v0.1.3
+	github.com/CREDOProject/go-rdepends v0.2.0
 	github.com/CREDOProject/sharedutils v0.2.0
 	github.com/go-git/go-git/v5 v5.13.2
 )

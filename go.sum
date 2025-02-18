@@ -46,6 +46,8 @@ github.com/CREDOProject/go-rdepends v0.1.2 h1:uGOT6/0efX9nmb6L32ynV9e2ZuZ+KRH9Ye
 github.com/CREDOProject/go-rdepends v0.1.2/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
 github.com/CREDOProject/go-rdepends v0.1.3 h1:/VYVpk12fSUjcb8HegXD9TywvBeURiIhdFxDGX/jP1I=
 github.com/CREDOProject/go-rdepends v0.1.3/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
+github.com/CREDOProject/go-rdepends v0.2.0 h1:g5/8x1IYHKRqg1mF8IdHsYA8QPW7Bve158j8I1m6xoA=
+github.com/CREDOProject/go-rdepends v0.2.0/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
 github.com/CREDOProject/go-rscript v0.0.1 h1:FhOeUgA7+Ga3SiXb2quFBlIPBP2dN8Gw5snXfD4xraI=
 github.com/CREDOProject/go-rscript v0.0.1/go.mod h1:u53h3+jFe3prvVLoVDfG9utigCLwGv+mJg+nkP5Ltd0=
 github.com/CREDOProject/sharedutils v0.1.2 h1:gb3Jg9PcqhAu+5YVZVtJ3BtS+d4uVOpcuKnixc7+ruI=
