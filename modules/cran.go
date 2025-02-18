@@ -58,7 +58,7 @@ func (c *cranModule) Apply(anyspell any) error {
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
-	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
+	if cache.Retrieve(cranModuleName+"apply", spell.PackageName) != nil {
 		return nil
 	}
 	err = DeepApply(&spell.ExternalDependencies)
@@ -97,7 +97,7 @@ func (c *cranModule) Apply(anyspell any) error {
 	script.Stderr = os.Stderr
 	err = script.Run()
 	if err == nil {
-		_ = cache.Insert(cranModuleName, spell.PackageName, true)
+		_ = cache.Insert(cranModuleName+"apply", spell.PackageName, true)
 	}
 	return err
 }
@@ -142,9 +142,6 @@ func (c *cranModule) Commit(config *Config, result any) error {
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
-	if newEntry == nil {
-		return nil
-	}
 	if Contains(config.Cran, *newEntry) {
 		return ErrAlreadyPresent
 	}
@@ -156,18 +153,18 @@ func (c *cranModule) Commit(config *Config, result any) error {
 func (c *cranModule) Save(anyspell any) error {
 	spell, err := types.To[cranSpell](anyspell)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return fmt.Errorf("Error saving cran: %v", err)
 	}
 	for _, dep := range spell.Dependencies {
 		if err := c.Save(dep); err != nil {
-			return err
+			return fmt.Errorf("Error saving: %v", err)
 		}
 	}
 	err = DeepSave(&spell.ExternalDependencies)
 	if err != nil {
-		return nil
+		return fmt.Errorf("Error deepsaving cran: %v", err)
 	}
-	if cache.Retrieve(cranModuleName, spell.PackageName) != nil {
+	if cache.Retrieve(cranModuleName+"save", spell.PackageName) != nil {
 		return nil
 	}
 	destdir, err := c.destinationDirectory()
@@ -206,7 +203,7 @@ func (c *cranModule) Save(anyspell any) error {
 	script.Stderr = os.Stderr
 	err = script.Run()
 	if err == nil {
-		_ = cache.Insert(cranModuleName, spell.PackageName, true)
+		_ = cache.Insert(cranModuleName+"save", spell.PackageName, true)
 	}
 	return err
 }
@@ -305,7 +302,7 @@ func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
 }
 
 func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
-	if spell := cache.Retrieve(cranModuleName,
+	if spell := cache.Retrieve(cranModuleName+"bare",
 		s.PackageName); spell != nil {
 		newSpell, err := types.To[cranSpell](spell)
 		if err != nil {
@@ -386,7 +383,7 @@ func (c *cranModule) bareRunSingle(s cranSpell) (*cranSpell, error) {
 			module().CliConfig(&finalSpell.ExternalDependencies).Run(nil, args)
 		}
 	}
-	_ = cache.Insert(cranModuleName, s.PackageName, finalSpell)
+	_ = cache.Insert(cranModuleName+"bare", s.PackageName, finalSpell)
 	return &finalSpell, nil
 }
 
@@ -464,23 +461,25 @@ func (c *cranModule) downloadFunction(bioconductor bool) func(
 }
 
 func (c *cranModule) installBioConductor(cfg *Config) error {
-	spell, err := c.bareRun(cranSpell{
-		PackageName:  "BiocManager",
-		BioConductor: false,
-	}, cfg)
+	cached := cache.Retrieve(cranModuleName+"bioc", "BiocManager")
+	if cached != nil {
+		return nil
+	}
+	spell, err := c.bareRun(cranSpell{PackageName: "BiocManager"}, cfg)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error bare run, %v", err)
 	}
-	err = c.Commit(cfg, spell)
-	if err != ErrAlreadyPresent && err != nil {
-		return err
+	if err = c.Commit(cfg, spell); err != nil && err != ErrAlreadyPresent {
+		return fmt.Errorf("Error committing, %v", err)
 	}
-	err = c.Save(*spell)
-	if err != nil {
-		return err
+	if err = c.Save(spell); err != nil {
+		return fmt.Errorf("Error saving, %v", err)
 	}
-	err = c.Apply(*spell)
-	return err
+	if err = c.Apply(spell); err != nil {
+		return fmt.Errorf("Error applying, %v", err)
+	}
+	cache.Insert(cranModuleName+"bioc", "BiocManager", spell)
+	return nil
 }
 
 // equals checks if two cranSpell objects are equal.
