@@ -1,5 +1,5 @@
 VERSION := $(shell if [ -n "$$(git status --porcelain)" ]; then \
-               echo "unreleased-$(shell git rev-parse --short HEAD)"; \
+               echo "unreleased-`git rev-parse --short HEAD`"; \
             elif git describe --tags --exact-match >/dev/null 2>&1; then \
                git describe --tags; \
             else \
