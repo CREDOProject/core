@@ -36,6 +36,8 @@ github.com/CREDOProject/go-rcran v0.7.3 h1:cDGqfbQaeylvPZUtA+5n4nf9y7aLLwpTz5Ckq
 github.com/CREDOProject/go-rcran v0.7.3/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
 github.com/CREDOProject/go-rcran v0.7.4 h1:56P6RRM9xpx7uRp7u1dr7v+JQ7C2vhtQ9fPl9SsSrlU=
 github.com/CREDOProject/go-rcran v0.7.4/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
+github.com/CREDOProject/go-rcran v0.8.0 h1:EynBJBeAjwyWSgZ02Gnd9o0+JgdnZDhCUbuqkAV0IjE=
+github.com/CREDOProject/go-rcran v0.8.0/go.mod h1:A/7t+hzSwjTQBpwI+1+ML39VY71h2AODcElKd9O7MtQ=
 github.com/CREDOProject/go-rdepends v0.0.2 h1:BxaIVR9c6TXEiqhbLJA1fSnZSSGFDTBvaOYg9RAEQFQ=
 github.com/CREDOProject/go-rdepends v0.0.2/go.mod h1:L/VDVrv4SwFIyh+Vssz+SMpM84/S5m9fyNxwyN/FoqM=
 github.com/CREDOProject/go-rdepends v0.1.0 h1:kbsLdHlnarGrHYW6nLnVXls1PdPfKHfS7pIX7Q7s92A=
