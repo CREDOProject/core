@@ -50,6 +50,8 @@ github.com/CREDOProject/go-rdepends v0.1.3 h1:/VYVpk12fSUjcb8HegXD9TywvBeURiIhdF
 github.com/CREDOProject/go-rdepends v0.1.3/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
 github.com/CREDOProject/go-rdepends v0.2.0 h1:g5/8x1IYHKRqg1mF8IdHsYA8QPW7Bve158j8I1m6xoA=
 github.com/CREDOProject/go-rdepends v0.2.0/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
+github.com/CREDOProject/go-rdepends v0.3.0 h1:lnhAYCGOkfiX4Uj5ECdoOV3fZE+mD3xRlWjO97zx+Zc=
+github.com/CREDOProject/go-rdepends v0.3.0/go.mod h1:3bkzzcyFpiaenC6f6/cuM/XV0n3Q+astysx3NgkU8yg=
 github.com/CREDOProject/go-rscript v0.0.1 h1:FhOeUgA7+Ga3SiXb2quFBlIPBP2dN8Gw5snXfD4xraI=
 github.com/CREDOProject/go-rscript v0.0.1/go.mod h1:u53h3+jFe3prvVLoVDfG9utigCLwGv+mJg+nkP5Ltd0=
 github.com/CREDOProject/sharedutils v0.1.2 h1:gb3Jg9PcqhAu+5YVZVtJ3BtS+d4uVOpcuKnixc7+ruI=
@@ -236,6 +238,8 @@ golang.org/x/crypto v0.32.0 h1:euUpcYgM8WcP71gNpTqQCn6rC2t6ULUPiOzfWaXVVfc=
 golang.org/x/crypto v0.32.0/go.mod h1:ZnnJkOaASj8g0AjIduWNlq2NRxL0PlBrbKVyZ6V/Ugc=
 golang.org/x/crypto v0.33.0 h1:IOBPskki6Lysi0lo9qQvbxiQ+FvsCC/YWOecCHAixus=
 golang.org/x/crypto v0.33.0/go.mod h1:bVdXmD7IV/4GdElGPozy6U7lWdRXA4qyRVGJV57uQ5M=
+golang.org/x/crypto v0.35.0 h1:b15kiHdrGCHrP6LvwaQ3c03kgNhhiMgvlhxHQhmg2Xs=
+golang.org/x/crypto v0.35.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
 golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
 golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
 golang.org/x/mod v0.22.0 h1:D4nJWe9zXqHOmWqj4VMOJhvzj7bEZg4wEYa759z1pH4=
