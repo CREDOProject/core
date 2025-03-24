@@ -5,7 +5,6 @@ go 1.23.0
 toolchain go1.23.2
 
 require (
-	github.com/CREDOProject/go-dnf v0.0.0-20241022081729-78c9dea28fc9
 	github.com/CREDOProject/go-osinfo v1.0.0
 	github.com/CREDOProject/go-pip v0.1.1
 	github.com/CREDOProject/go-rdepends v0.3.0
@@ -19,12 +18,8 @@ require (
 	github.com/aquasecurity/go-version v0.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/mmcloughlin/avo v0.6.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/tools v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	pault.ag/go/debian v0.18.0 // indirect
 	pault.ag/go/topsort v0.1.1 // indirect
