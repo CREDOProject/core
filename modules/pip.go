@@ -136,6 +136,30 @@ func getPipBinary() (*string, error) {
 	return &pipBinary, nil
 }
 
+func (c *pipModule) installApt(config *Config) error {
+	if _, ok := Modules["apt"]; !ok {
+		return nil
+	}
+	apt := aptModule{}
+	packages := []string{"python3"}
+	for _, v := range packages {
+		spell, err := apt.bareRun(aptSpell{Name: v})
+		if err != nil {
+			return fmt.Errorf("InstallApt error barerun: %v", err)
+		}
+		if err = apt.Commit(config, spell); err != nil && err != ErrAlreadyPresent {
+			return fmt.Errorf("InstallApt error commiting: %v", err)
+		}
+		if err = apt.Save(spell); err != nil {
+			return fmt.Errorf("InstallApt error saving: %v", err)
+		}
+		if err = apt.Apply(spell); err != nil {
+			return fmt.Errorf("InstallApt error applying: %v", err)
+		}
+	}
+	return nil
+}
+
 func (m *pipModule) bareRun(p pipSpell) (pipSpell, error) {
 	if spell := cache.Retrieve(pipModuleName, p.Name); spell != nil {
 		newSpell, err := types.To[pipSpell](spell)
@@ -234,6 +258,7 @@ func (m *pipModule) cobraRun(config *Config) func(*cobra.Command, []string) {
 		}
 	}
 	return func(c *cobra.Command, args []string) {
+		m.installApt(config)
 		spell, err := m.bareRun(pipSpell{
 			Name: args[0],
 		})

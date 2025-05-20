@@ -291,13 +291,32 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 	}
 }
 
-func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
-	if module, ok := Modules["apt"]; ok {
-		args := []string{"r-base", "r-base-dev"}
-		for _, v := range args {
-			module().CliConfig(cfg).Run(nil, []string{v})
+func (c *cranModule) installApt(config *Config) error {
+	if _, ok := Modules["apt"]; !ok {
+		return nil
+	}
+	apt := aptModule{}
+	packages := []string{"r-base", "r-base-dev"}
+	for _, v := range packages {
+		spell, err := apt.bareRun(aptSpell{Name: v})
+		if err != nil {
+			return fmt.Errorf("InstallApt error barerun: %v", err)
+		}
+		if err = apt.Commit(config, spell); err != nil && err != ErrAlreadyPresent {
+			return fmt.Errorf("InstallApt error commiting: %v", err)
+		}
+		if err = apt.Save(spell); err != nil {
+			return fmt.Errorf("InstallApt error saving: %v", err)
+		}
+		if err = apt.Apply(spell); err != nil {
+			return fmt.Errorf("InstallApt error applying: %v", err)
 		}
 	}
+	return nil
+}
+
+func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
+	c.installApt(cfg)
 	if s.BioConductor {
 		err := c.installBioConductor(cfg)
 		if err != nil {
