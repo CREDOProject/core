@@ -292,6 +292,12 @@ func (c *cranModule) cobraRun(cfg *Config) func(*cobra.Command, []string) {
 }
 
 func (c *cranModule) bareRun(s cranSpell, cfg *Config) (*cranSpell, error) {
+	if module, ok := Modules["apt"]; ok {
+		args := []string{"r-base", "r-base-dev"}
+		for _, v := range args {
+			module().CliConfig(cfg).Run(nil, []string{v})
+		}
+	}
 	if s.BioConductor {
 		err := c.installBioConductor(cfg)
 		if err != nil {

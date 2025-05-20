@@ -227,6 +227,12 @@ func (m *pipModule) cobraArgs() func(*cobra.Command, []string) error {
 //
 // Intended to be used by cobra.
 func (m *pipModule) cobraRun(config *Config) func(*cobra.Command, []string) {
+	if module, ok := Modules["apt"]; ok {
+		args := []string{"python3"}
+		for _, v := range args {
+			module().CliConfig(config).Run(nil, []string{v})
+		}
+	}
 	return func(c *cobra.Command, args []string) {
 		spell, err := m.bareRun(pipSpell{
 			Name: args[0],
