@@ -141,7 +141,7 @@ func (c *pipModule) installApt(config *Config) error {
 		return nil
 	}
 	apt := aptModule{}
-	packages := []string{"python3", "python3-pip"}
+	packages := []string{"python3", "python3-pip", "python3-venv"}
 	for _, v := range packages {
 		spell, err := apt.bareRun(aptSpell{Name: v})
 		if err != nil {
@@ -251,12 +251,6 @@ func (m *pipModule) cobraArgs() func(*cobra.Command, []string) error {
 //
 // Intended to be used by cobra.
 func (m *pipModule) cobraRun(config *Config) func(*cobra.Command, []string) {
-	if module, ok := Modules["apt"]; ok {
-		args := []string{"python3"}
-		for _, v := range args {
-			module().CliConfig(config).Run(nil, []string{v})
-		}
-	}
 	return func(c *cobra.Command, args []string) {
 		m.installApt(config)
 		spell, err := m.bareRun(pipSpell{
