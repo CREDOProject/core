@@ -141,7 +141,7 @@ func (c *pipModule) installApt(config *Config) error {
 		return nil
 	}
 	apt := aptModule{}
-	packages := []string{"python3"}
+	packages := []string{"python3", "python3-pip"}
 	for _, v := range packages {
 		spell, err := apt.bareRun(aptSpell{Name: v})
 		if err != nil {
