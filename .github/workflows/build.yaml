@@ -49,6 +49,7 @@ jobs:
           files: |
             *_credo.zip
   docker:
+    needs: build
     strategy:
       matrix:
         architecture:
