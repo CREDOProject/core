@@ -33,6 +33,12 @@ jobs:
       - name: Build
         run: |
           GOOS=${{ matrix.platform }} GOARCH=${{ matrix.architecture }} make
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: credo-linux-${{ matrix.architecture }}
+          path: credo
+        if: matrix.platform == 'linux'
       - uses: vimtor/action-zip@v1.2
         with:
           files: credo
@@ -42,3 +48,40 @@ jobs:
         with:
           files: |
             *_credo.zip
+  docker:
+    strategy:
+      matrix:
+        architecture:
+          - amd64
+          - arm64
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: credo-linux-${{ matrix.architecture }}
+          path: ./bin
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
