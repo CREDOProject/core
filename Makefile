@@ -1,12 +1,6 @@
-VERSION := $(shell if [ -n "$$(git status --porcelain)" ]; then \
-               echo "unreleased-`git rev-parse --short HEAD`"; \
-            elif git describe --tags --exact-match >/dev/null 2>&1; then \
-               git describe --tags; \
-            else \
-               git rev-parse --short HEAD; \
-            fi)
-COMMIT := $(shell git rev-parse HEAD)
-BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+export RELEASE_VERSION ?= $(shell git describe --tags --always)
+export GIT_COMMIT := $(shell git rev-parse HEAD)
+export BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 t="coverprofile.txt"
 
@@ -20,8 +14,8 @@ clean:
 .PHONY: build
 build: clean
 	go build -ldflags "\
-		-X 'credo/version.Version=${VERSION}' \
-		-X 'credo/version.Commit=${COMMIT}' \
+		-X 'credo/version.Version=${RELEASE_VERSION}' \
+		-X 'credo/version.Commit=${GIT_COMMIT}' \
 		-X 'credo/version.BuildDate=${BUILD_DATE}'" \
 		-o credo
 test:
