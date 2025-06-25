@@ -55,7 +55,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ghcr.io/${{ github.repository }}:latest-${{ matrix.architecture }}
+            ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}-${{ matrix.architecture }}
           labels: ${{ steps.meta.outputs.labels }}
         if: matrix.platform == 'linux'
 
