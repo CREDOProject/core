@@ -160,6 +160,10 @@ func (*aptModule) bareRun(s aptSpell) (aptSpell, error) {
 	aptPack := &apt.Package{
 		Name: s.Name,
 	}
+	_, err := apt.CheckForUpdates()
+	if err != nil {
+		return aptSpell{}, fmt.Errorf("failed to check for updates: %w", err)
+	}
 	output, err := apt.InstallDry(aptPack)
 	logger.Get().Print(string(output))
 	if err != nil {
