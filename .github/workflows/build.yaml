@@ -45,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository  | lower }}
+          images: ghcr.io/credoproject/credo
           tags: |
             type=semver,pattern=v{{version}}
             type=raw,value=latest
@@ -56,8 +56,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository | lower }}:latest-${{ matrix.architecture }}
-            ghcr.io/${{ github.repository | lower }}:${{ steps.meta.outputs.version }}-${{ matrix.architecture }}
+            ghcr.io/credoproject/core:latest-${{ matrix.architecture }}
+            ghcr.io/credoproject/core:${{ steps.meta.outputs.version }}-${{ matrix.architecture }}
           labels: ${{ steps.meta.outputs.labels }}
         if: matrix.platform == 'linux'
 
