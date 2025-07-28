@@ -12,7 +12,6 @@ RUN set -x \
 	&& apt-get update -yq --no-install-recommends \
 	&& apt-get install -yq --no-install-recommends \
 	build-essential \
-	r-base \
 	gfortran \
 	ca-certificates
 
