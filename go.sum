@@ -4,6 +4,8 @@ github.com/CREDOProject/go-anticonf-parser v0.0.2 h1:XazKnAcrJqDvMWZ2pt+i4X4G//G
 github.com/CREDOProject/go-anticonf-parser v0.0.2/go.mod h1:LAa2IRV/7NE7Nejpe2QF4UknDMcwDvti1EDkDmgUH9E=
 github.com/CREDOProject/go-apt-client v0.5.1 h1:ThlXATjnWwZ2P15eY6nLRlIzSsDX0l9Loytf+NlOZCo=
 github.com/CREDOProject/go-apt-client v0.5.1/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
+github.com/CREDOProject/go-apt-client v0.5.2 h1:v3RkcKrfQIq7+Q+9/9AtSCAV0haVfzqPjRHUIJFQptw=
+github.com/CREDOProject/go-apt-client v0.5.2/go.mod h1:/45lmC3Re33I2WJ8JjGaRo8h7v6/HTc5LsPAv0ZLNJk=
 github.com/CREDOProject/go-conda v0.1.1 h1:oniGCr6lZKr3kxXQjxeofewVuDIfl/a+Oi4P5uphkKY=
 github.com/CREDOProject/go-conda v0.1.1/go.mod h1:d2YeiK6GMTTa+ve8rD6wRVc9O7kxxqpEHJ37L6RlCuI=
 github.com/CREDOProject/go-isgiturl v1.0.0 h1:ssQzcz46ZUE0waMJaqFimoYuvuRXp5KoIa6+PzTtEpA=
