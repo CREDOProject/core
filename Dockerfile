@@ -13,7 +13,9 @@ RUN set -x \
 	&& apt-get install -yq --no-install-recommends \
 	build-essential \
 	gfortran \
-	ca-certificates
+	ca-certificates \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* 
 
 COPY ./credo /usr/bin/credo
 
