@@ -27,7 +27,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
-	github.com/CREDOProject/go-apt-client v0.5.0
+	github.com/CREDOProject/go-apt-client v0.5.1
 	github.com/CREDOProject/go-conda v0.1.1
 	github.com/CREDOProject/go-isgiturl v1.0.0
 	github.com/CREDOProject/go-pythonvenv v0.1.3
