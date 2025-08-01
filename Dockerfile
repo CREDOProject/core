@@ -14,8 +14,8 @@ RUN set -x \
 	build-essential \
 	gfortran \
 	ca-certificates \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* 
+	&& rm -rf /var/lib/apt/lists/* \
+	&& apt-get clean
 
 COPY ./credo /usr/bin/credo
 
